@@ -358,12 +358,11 @@ async function extractDishes(){
   catch(e){showErr(e.message);btn.disabled=false;btn.textContent='✦ Extract dishes from menu';return;}
   try{
     const raw=await claude(
-      `You are a menu parser. Extract every dish from the menu.
-CRITICAL: Return ONLY a raw JSON array. No markdown, no backticks, no explanation, no text before or after.
-Your entire response must start with [ and end with ].
-Each element is an object: {"name": "dish name", "desc": "short description or ingredients, empty string if none"}
-Example: [{"name":"Linguine Vongole","desc":"briny clams, peperoncino, lemon"},{"name":"Tiramisu","desc":""}]`,
-      [mc,{type:'text',value:'Return only the JSON array starting with ['}]
+      `You are a menu parser. Extract ONLY actual food and drink items a customer would order from this restaurant menu. Do NOT include navigation text, page headers, restaurant name, address, phone, social media links, hours, policies, staff names, or any non-food text. ONLY real dishes and drinks.
+CRITICAL: Return ONLY a raw JSON array. No markdown, no backticks, no explanation, no text before or after. Start with [ and end with ].
+Each element: {"name":"dish name","desc":"ingredients or short description, empty string if none"}
+Example: [{"name":"Linguine Vongole","desc":"briny clams, peperoncino, lemon"},{"name":"Tiramisu","desc":"mascarpone, espresso"}]`,
+      [mc,{type:'text',value:'Extract only real food and drink items. Start your response with ['}]
     );
     let parsed;
     const cleaned=raw.replace(/```json/g,'').replace(/```/g,'').trim();
@@ -394,6 +393,8 @@ Example: [{"name":"Linguine Vongole","desc":"briny clams, peperoncino, lemon"},{
     ).filter(Boolean);
     if(!allDishes.length)throw new Error('No dishes found — try pasting the menu as text');
     renderDishGrid();
+    // Force re-render all course dish grids now that we have dishes
+    courses.forEach(c=>renderCourseDishGrid(c.id));
   }catch(e){showErr('Could not extract dishes: '+e.message);}
   btn.disabled=false;btn.textContent='✦ Re-extract dishes';
 }
@@ -526,12 +527,15 @@ function renderCourseDishGrid(courseId){
     g.innerHTML=`<p class="hint">Extract dishes from the menu above first, or add them manually.</p>`;
     return;
   }
-  allDishes.forEach(d=>{
+  allDishes.forEach((d,idx)=>{
     const isPicked=course.picked.find(p=>p.name===d.name);
     const el=document.createElement('div');
     el.className='dchip'+(isPicked?' picked':(!isPicked&&course.picked.length>=8?' grey':''));
-    el.innerHTML=`<div style="font-weight:500;font-size:13px">${d.name}</div>${d.desc?`<div style="font-size:11px;opacity:.65;margin-top:2px;line-height:1.3">${d.desc}</div>`:''}`;
-    el.addEventListener('click',()=>toggleCourseDish(courseId,d));
+    el.style.cursor='pointer';
+    el.dataset.idx=idx;
+    el.dataset.courseid=courseId;
+    el.innerHTML=`<div style="font-weight:500;font-size:13px;pointer-events:none">${d.name}</div>${d.desc?`<div style="font-size:11px;opacity:.65;margin-top:2px;line-height:1.3;pointer-events:none">${d.desc}</div>`:''}`;
+    el.onclick=function(){toggleCourseDish(parseInt(this.dataset.courseid),allDishes[parseInt(this.dataset.idx)]);};
     g.appendChild(el);
   });
 }
