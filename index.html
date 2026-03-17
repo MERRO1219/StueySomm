@@ -201,9 +201,9 @@ input[type=url]:focus,input[type=text]:focus{outline:none;border-color:var(--win
   <!-- API Key -->
   <div class="setup" id="setupCard">
     <h2>Setup your API key</h2>
-    <p>Enter your Google Gemini API key below. It's saved only in your browser and never shared with anyone. Get a free key at <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a> → Get API Key.</p>
+    <p>Enter your Google Gemini API key below. It's saved only in your browser and never shared with anyone. Get your key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys.</p>
     <div class="key-row">
-      <input type="password" id="apiKeyInput" placeholder="AIzaSy...">
+      <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
       <button class="save-btn" onclick="saveKey()">Save</button>
     </div>
     <div class="key-status no" id="keyStatus">No key saved yet</div>
@@ -299,11 +299,11 @@ const S={};
 let picked=[],allDishes=[];
 
 // ── API Key ──
-function getKey(){return localStorage.getItem('sommelier_gemini_key')||'';}
+function getKey(){return localStorage.getItem('sommelier_claude_key')||'';}
 function saveKey(){
   const v=document.getElementById('apiKeyInput').value.trim();
   if(!v){updateKeyStatus('Please enter a valid key','no');return;}
-  localStorage.setItem('sommelier_gemini_key',v);
+  localStorage.setItem('sommelier_claude_key',v);
   updateKeyStatus('✓ Key saved','ok');
   document.getElementById('setupCard').style.display='none';
 }
@@ -468,33 +468,39 @@ async function getContent(side){
   }
 }
 
-function buildGeminiParts(contents){
-  // contents is array of {type,value,mimeType}
-  const parts=[];
-  contents.forEach(c=>{
-    if(c.type==='text')parts.push({text:c.value});
-    else if(c.type==='image')parts.push({inlineData:{mimeType:c.mimeType,data:c.value}});
-    else if(c.type==='pdf')parts.push({inlineData:{mimeType:'application/pdf',data:c.value}});
+
+
+function buildClaudeMsgs(contentParts){
+  return contentParts.map(c=>{
+    if(c.type==='text')return {type:'text',text:c.value};
+    if(c.type==='image')return {type:'image',source:{type:'base64',media_type:c.mimeType||'image/jpeg',data:c.value}};
+    if(c.type==='pdf')return {type:'document',source:{type:'base64',media_type:'application/pdf',data:c.value}};
+    return {type:'text',text:''};
   });
-  return parts;
 }
 
 async function gemini(systemPrompt,contentParts){
   const key=getKey();
-  if(!key)throw new Error('Please enter your Gemini API key at the top of the page.');
-  const parts=[{text:systemPrompt},...buildGeminiParts(contentParts)];
-  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${key}`,{
+  if(!key)throw new Error('Please enter your Anthropic API key at the top of the page.');
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':key,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
     body:JSON.stringify({
-      contents:[{parts}],
-      generationConfig:{temperature:0.4,maxOutputTokens:4096}
+      model:'claude-sonnet-4-20250514',
+      max_tokens:4096,
+      system:systemPrompt,
+      messages:[{role:'user',content:buildClaudeMsgs(contentParts)}]
     })
   });
   if(!res.ok){const t=await res.text();throw new Error(`API error (${res.status}): ${t.slice(0,200)}`);}
   const d=await res.json();
   if(d.error)throw new Error(d.error.message);
-  return d.candidates?.[0]?.content?.parts?.[0]?.text||'';
+  return d.content?.map(i=>i.text||'').join('')||'';
 }
 
 function parseArr(raw){
