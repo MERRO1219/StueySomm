@@ -2,11 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f7f4ef">
 <title>Somm by Stu</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
   --ink:#1c1814;--ink2:#4a4540;--ink3:#8a847c;
   --paper:#f7f4ef;--cream:#fffdf9;
@@ -18,166 +21,159 @@
   --amber-bg:#fdf3e4;--amber-text:#7a4d0a;
   --red-bg:#faeced;--red-text:#7a1f28;
   --rlg:16px;
+  --touch:48px;
 }
-html{scroll-behavior:smooth;}
-body{font-family:'Jost',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
-.page{max-width:900px;margin:0 auto;padding:2.5rem 1.25rem 5rem;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+body{font-family:'Jost',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;overflow-x:hidden;}
+.page{max-width:860px;margin:0 auto;padding:2rem 1rem 6rem;}
 
-/* Header */
-.header{text-align:center;margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid var(--border);}
-.header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,7vw,62px);font-weight:300;letter-spacing:.04em;color:var(--ink);line-height:1;margin-bottom:.5rem;}
-.header h1 span{color:var(--wine);}
-.header .tagline{font-size:13px;color:var(--ink3);letter-spacing:.06em;font-family:'Jost',sans-serif;}
+/* ── Header ── */
+.header{text-align:center;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+.header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,8vw,64px);font-weight:300;letter-spacing:.03em;color:var(--ink);line-height:1;margin-bottom:.4rem;}
+.header h1 .by{color:var(--wine);}
+.tagline{font-size:13px;color:var(--ink3);letter-spacing:.05em;font-family:'Jost',sans-serif;}
 .tagline-ai{font-weight:700;font-style:italic;color:var(--wine);}
 
-/* Setup */
-.setup{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.5rem;margin-bottom:2rem;position:relative;overflow:hidden;}
+/* ── Setup ── */
+.setup{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem;margin-bottom:1.5rem;position:relative;overflow:hidden;}
 .setup::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--wine),var(--gold));}
-.setup h2{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;margin-bottom:6px;}
-.setup p{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:12px;}
-.setup a{color:var(--wine);text-decoration:none;}
+.setup h2{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;margin-bottom:5px;}
+.setup p{font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:12px;}
+.setup a{color:var(--wine);}
 .key-row{display:flex;gap:8px;}
-.key-row input{flex:1;padding:9px 12px;font-size:13px;font-family:'Jost',sans-serif;border:1px solid var(--border2);border-radius:8px;background:var(--paper);color:var(--ink);}
+.key-row input{flex:1;padding:12px;font-size:14px;font-family:'Jost',sans-serif;border:1px solid var(--border2);border-radius:10px;background:var(--paper);color:var(--ink);min-height:var(--touch);}
 .key-row input:focus{outline:none;border-color:var(--wine);}
-.save-btn{padding:9px 18px;background:var(--wine);color:#fff;border:none;border-radius:8px;font-size:13px;font-family:'Jost',sans-serif;cursor:pointer;}
-.key-status{font-size:12px;margin-top:6px;font-family:'Jost',sans-serif;}
+.save-btn{padding:12px 20px;background:var(--wine);color:#fff;border:none;border-radius:10px;font-size:14px;font-family:'Jost',sans-serif;cursor:pointer;min-height:var(--touch);white-space:nowrap;}
+.key-status{font-size:12px;margin-top:6px;}
 .key-status.ok{color:var(--green-text);}
 .key-status.no{color:var(--red-text);}
 
-/* Section label */
-.slabel{font-size:10px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:.15em;display:block;margin-bottom:10px;font-family:'Jost',sans-serif;}
+/* ── Section label ── */
+.slabel{font-size:10px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:.15em;display:block;margin-bottom:10px;}
 
-/* Cards */
+/* ── Cards ── */
 .card{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem;margin-bottom:1rem;}
 
-/* Grid */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+/* ── Grid ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;}
+@media(max-width:540px){.grid2{grid-template-columns:1fr;}}
 
-/* Source tabs */
-.stabs{display:flex;gap:2px;background:var(--paper);border-radius:8px;padding:3px;margin-bottom:10px;}
-.sBtn{flex:1;padding:6px 4px;font-size:12px;font-family:'Jost',sans-serif;color:var(--ink3);cursor:pointer;border:none;background:none;border-radius:6px;text-align:center;transition:all .12s;}
-.sBtn.on{background:var(--cream);color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+/* ── Source tabs ── */
+.stabs{display:flex;gap:2px;background:var(--paper);border-radius:10px;padding:3px;margin-bottom:10px;}
+.sBtn{flex:1;padding:8px 4px;font-size:12px;font-family:'Jost',sans-serif;color:var(--ink3);cursor:pointer;border:none;background:none;border-radius:8px;text-align:center;transition:all .12s;min-height:36px;}
+.sBtn.on{background:var(--wine-light);color:var(--wine);font-weight:500;border:1px solid var(--wine-mid);}
 .sp{display:none;}.sp.on{display:block;}
-textarea{width:100%;height:145px;font-size:13px;font-family:'Jost',sans-serif;resize:vertical;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--paper);color:var(--ink);line-height:1.6;}
+textarea{width:100%;height:140px;font-size:14px;font-family:'Jost',sans-serif;resize:vertical;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--paper);color:var(--ink);line-height:1.6;}
 textarea:focus{outline:none;border-color:var(--wine);}
-input[type=url],input[type=text],input[type=number]{width:100%;padding:9px 12px;font-size:13px;font-family:'Jost',sans-serif;border:1px solid var(--border);border-radius:8px;background:var(--paper);color:var(--ink);}
+input[type=url],input[type=text],input[type=number]{width:100%;padding:12px;font-size:14px;font-family:'Jost',sans-serif;border:1px solid var(--border);border-radius:10px;background:var(--paper);color:var(--ink);min-height:var(--touch);}
 input[type=url]:focus,input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--wine);}
 .hint{font-size:12px;color:var(--ink3);margin-top:5px;line-height:1.5;}
-.dropzone{border:1.5px dashed var(--border2);border-radius:8px;padding:1.25rem;text-align:center;background:var(--paper);position:relative;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;}
-.dropzone:hover{border-color:var(--wine);}
+.dropzone{border:1.5px dashed var(--border2);border-radius:10px;padding:1.25rem;text-align:center;background:var(--paper);position:relative;min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;}
 .dropzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.dropzone .dico{font-size:20px;}
-.dropzone p{font-size:12px;color:var(--ink3);}
-.fbadge{display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green-text);font-size:12px;padding:3px 10px;border-radius:20px;margin-top:6px;}
-.thumb{width:100%;max-height:100px;object-fit:cover;border-radius:8px;margin-top:6px;display:none;}
+.dropzone .dico{font-size:22px;}
+.dropzone p{font-size:13px;color:var(--ink3);}
+.fbadge{display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green-text);font-size:12px;padding:4px 12px;border-radius:20px;margin-top:8px;}
+.thumb{width:100%;max-height:110px;object-fit:cover;border-radius:10px;margin-top:8px;display:none;}
 
-/* By the glass toggle */
-.glass-toggle-wrap{display:flex;align-items:center;justify-content:space-between;background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1rem 1.25rem;margin-bottom:1rem;}
-.glass-toggle-label{font-size:14px;color:var(--ink);font-family:'Jost',sans-serif;}
-.glass-toggle-label small{display:block;font-size:12px;color:var(--ink3);margin-top:2px;}
-.toggle-switch{position:relative;width:48px;height:26px;flex-shrink:0;}
-.toggle-switch input{opacity:0;width:0;height:0;}
-.toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:13px;cursor:pointer;transition:background .2s;}
-.toggle-slider::before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
-.toggle-switch input:checked+.toggle-slider{background:var(--wine);}
-.toggle-switch input:checked+.toggle-slider::before{transform:translateX(22px);}
+/* ── By the glass toggle ── */
+.glass-wrap{display:flex;align-items:center;justify-content:space-between;background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1rem 1.25rem;margin-bottom:1rem;}
+.glass-label{font-size:15px;color:var(--ink);font-family:'Jost',sans-serif;font-weight:400;}
+.glass-label small{display:block;font-size:12px;color:var(--ink3);margin-top:2px;line-height:1.4;}
+.toggle{position:relative;width:52px;height:28px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:var(--border2);border-radius:14px;cursor:pointer;transition:background .2s;}
+.toggle-track::before{content:'';position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.toggle input:checked+.toggle-track{background:var(--wine);}
+.toggle input:checked+.toggle-track::before{transform:translateX(24px);}
 
-/* Extract button */
-.exBtn{width:100%;padding:10px;font-size:13px;font-family:'Jost',sans-serif;background:var(--paper);border:1px solid var(--border);border-radius:8px;color:var(--ink2);cursor:pointer;margin-bottom:10px;transition:all .12s;}
+/* ── Course card ── */
+.course-card{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);margin-bottom:1rem;overflow:hidden;}
+.course-bar{background:var(--wine);padding:.6rem 1.25rem;display:flex;align-items:center;justify-content:space-between;}
+.course-bar-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;color:#fff;letter-spacing:.04em;}
+.remove-course{background:rgba(255,255,255,.2);border:none;color:#fff;cursor:pointer;font-size:18px;line-height:1;padding:4px 8px;border-radius:6px;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;}
+.course-body{padding:1.25rem;}
+
+/* ── Extract button ── */
+.exBtn{width:100%;padding:13px;font-size:14px;font-family:'Jost',sans-serif;background:var(--paper);border:1px solid var(--border);border-radius:10px;color:var(--ink2);cursor:pointer;margin-bottom:12px;transition:all .12s;min-height:var(--touch);}
 .exBtn:hover{border-color:var(--wine);color:var(--wine);}
 .exBtn:disabled{opacity:.4;cursor:not-allowed;}
 
-/* Dish grid */
-.dishGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:7px;max-height:260px;overflow-y:auto;padding-right:2px;}
-.dchip{padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'Jost',sans-serif;color:var(--ink2);cursor:pointer;background:var(--cream);line-height:1.3;user-select:none;transition:all .12s;}
-.dchip:hover{border-color:var(--wine);color:var(--wine);}
+/* ── Dish chips ── */
+.dishGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:12px;}
+@media(max-width:400px){.dishGrid{grid-template-columns:1fr 1fr;}}
+.dchip{padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:13px;font-family:'Jost',sans-serif;color:var(--ink2);cursor:pointer;background:var(--cream);line-height:1.3;user-select:none;transition:all .12s;min-height:44px;display:flex;flex-direction:column;justify-content:center;}
+.dchip:active{transform:scale(.97);}
 .dchip.picked{background:var(--wine-light);color:var(--wine);border-color:var(--wine-mid);font-weight:500;}
 .dchip.grey{opacity:.35;pointer-events:none;}
 .manRow{display:flex;gap:8px;margin-top:10px;}
 .manRow input{flex:1;}
-.secBtn{padding:8px 14px;font-size:13px;font-family:'Jost',sans-serif;border:1px solid var(--border2);border-radius:8px;background:none;color:var(--ink);cursor:pointer;white-space:nowrap;}
-.secBtn:hover{background:var(--paper);}
-.pillRow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
-.spill{display:inline-flex;align-items:center;gap:5px;background:var(--wine-light);color:var(--wine);font-size:12px;padding:3px 10px;border-radius:20px;font-family:'Jost',sans-serif;}
-.spill button{background:none;border:none;cursor:pointer;color:var(--wine-mid);font-size:14px;padding:0;line-height:1;}
+.secBtn{padding:12px 16px;font-size:14px;font-family:'Jost',sans-serif;border:1px solid var(--border2);border-radius:10px;background:none;color:var(--ink);cursor:pointer;white-space:nowrap;min-height:var(--touch);}
+.pillRow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:0;}
+.spill{display:inline-flex;align-items:center;gap:6px;background:var(--wine-light);color:var(--wine);font-size:13px;padding:6px 12px;border-radius:20px;font-family:'Jost',sans-serif;}
+.spill button{background:none;border:none;cursor:pointer;color:var(--wine-mid);font-size:16px;padding:0;line-height:1;min-width:20px;min-height:20px;}
 
-/* Wine type selector */
-.wine-type-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:0;}
-.wtype-btn{padding:6px 14px;font-size:12px;font-family:'Jost',sans-serif;border:1px solid var(--border2);border-radius:20px;background:var(--paper);color:var(--ink2);cursor:pointer;transition:all .12s;letter-spacing:.02em;}
+/* ── Wine type selector ── */
+.wtype-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px;}
+.wtype-btn{padding:8px 14px;font-size:13px;font-family:'Jost',sans-serif;border:1px solid var(--border2);border-radius:20px;background:var(--paper);color:var(--ink2);cursor:pointer;transition:all .12s;min-height:36px;}
 .wtype-btn.on{background:var(--wine-light);color:var(--wine);border-color:var(--wine-mid);font-weight:500;}
 
-/* Price range */
+/* ── Price row ── */
 .price-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.price-row label{font-size:11px;color:var(--ink3);display:block;margin-bottom:4px;letter-spacing:.04em;}
-input[type=range]{width:100%;accent-color:var(--wine);cursor:pointer;}
+.price-row label{font-size:11px;color:var(--ink3);display:block;margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase;}
+.price-row input{height:44px;}
 
-/* Course card */
-.course-card{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem;margin-bottom:1rem;position:relative;overflow:hidden;}
-.course-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--wine);}
-.course-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
-.course-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--ink);padding-left:8px;}
-.remove-course{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:18px;line-height:1;padding:2px 6px;border-radius:6px;}
-.remove-course:hover{color:var(--wine);background:var(--wine-light);}
-
-/* Add course button */
-.add-course-btn{width:100%;padding:12px;background:none;border:1.5px dashed var(--border2);border-radius:var(--rlg);font-size:14px;font-family:'Cormorant Garamond',serif;color:var(--ink3);cursor:pointer;transition:all .15s;margin-bottom:1rem;letter-spacing:.04em;}
+/* ── Add course / main buttons ── */
+.add-course-btn{width:100%;padding:14px;background:none;border:1.5px dashed var(--border2);border-radius:var(--rlg);font-size:15px;font-family:'Cormorant Garamond',serif;color:var(--ink3);cursor:pointer;transition:all .15s;margin-bottom:1rem;letter-spacing:.04em;min-height:52px;}
 .add-course-btn:hover{border-color:var(--wine);color:var(--wine);}
 .add-course-btn:disabled{opacity:.35;cursor:not-allowed;}
+.bigBtn{width:100%;padding:16px;background:var(--wine);color:#fff;border:none;border-radius:var(--rlg);font-size:17px;font-family:'Cormorant Garamond',serif;font-weight:400;cursor:pointer;letter-spacing:.04em;transition:all .15s;min-height:56px;}
+.bigBtn:active{transform:scale(.98);}
+.bigBtn:disabled{opacity:.4;cursor:not-allowed;}
 
-/* Get pairings button */
-.bigBtn{width:100%;padding:14px;background:var(--wine);color:#fff;border:none;border-radius:var(--rlg);font-size:16px;font-family:'Cormorant Garamond',serif;font-weight:400;cursor:pointer;letter-spacing:.04em;transition:all .15s;margin-top:.5rem;}
-.bigBtn:hover{background:#5a1a23;transform:translateY(-1px);box-shadow:0 4px 16px rgba(107,31,42,.25);}
-.bigBtn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+/* ── Results ── */
+#results{margin-top:2rem;}
+.course-results{margin-bottom:2.5rem;}
+.course-results-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ink);margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.course-results-title::before{content:'';display:inline-block;width:3px;height:20px;background:var(--wine);border-radius:2px;flex-shrink:0;}
 
-/* Results */
-.results-section{margin-top:2rem;}
-.course-results{margin-bottom:2rem;}
-.course-results-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ink);margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-.course-results-title::before{content:'';display:inline-block;width:3px;height:20px;background:var(--wine);border-radius:2px;}
+/* Pairing cards */
 .pcard{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem;margin-bottom:.75rem;}
-.pcard:hover{box-shadow:0 2px 12px rgba(0,0,0,.06);}
-.dname{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--ink);margin-bottom:3px;}
-.wrow{font-size:13px;color:var(--ink2);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'Jost',sans-serif;}
+.dname{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--ink);margin-bottom:4px;}
+.wrow{font-size:13px;color:var(--ink2);margin-bottom:8px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-family:'Jost',sans-serif;}
 .wname{font-weight:500;color:var(--ink);}
 .wprice{color:var(--gold);font-size:12px;}
-.wbadge{font-size:10px;padding:2px 9px;border-radius:20px;font-weight:500;font-family:'Jost',sans-serif;letter-spacing:.04em;}
-.rat{font-size:13px;color:var(--ink2);line-height:1.75;border-top:1px solid var(--border);padding-top:9px;margin-top:9px;font-family:'Jost',sans-serif;}
-.tags{margin-bottom:2px;}
-.tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;background:var(--paper);color:var(--ink3);border:1px solid var(--border);margin:2px 3px 2px 0;font-family:'Jost',sans-serif;}
-.alts{margin-top:7px;font-size:12px;color:var(--ink3);font-family:'Jost',sans-serif;}
+.wbadge{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500;font-family:'Jost',sans-serif;letter-spacing:.03em;}
+.rat{font-size:13px;color:var(--ink2);line-height:1.75;border-top:1px solid var(--border);padding-top:10px;margin-top:10px;font-family:'Jost',sans-serif;}
+.tags{margin-bottom:4px;}
+.tag{display:inline-block;font-size:11px;padding:3px 9px;border-radius:20px;background:var(--paper);color:var(--ink3);border:1px solid var(--border);margin:2px 3px 2px 0;}
+.alts{margin-top:8px;font-size:12px;color:var(--ink3);}
 .alts b{color:var(--ink2);}
 
-/* Group bottle result */
+/* Group bottle cards */
 .gcard{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem;margin-bottom:.75rem;}
 .ghead{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;}
-.gnum{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:var(--wine-light);border-radius:50%;font-size:12px;font-weight:500;color:var(--wine);flex-shrink:0;}
+.gnum{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:var(--wine-light);border-radius:50%;font-size:13px;font-weight:500;color:var(--wine);flex-shrink:0;}
 .gwname{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--ink);}
-.sbar{margin:6px 0;}
-.sbl{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-bottom:3px;font-family:'Jost',sans-serif;}
-.sbg{height:4px;background:var(--paper);border-radius:2px;overflow:hidden;border:1px solid var(--border);}
-.sbf{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--wine-mid),var(--wine));}
-.covWrap{margin-top:8px;border-top:1px solid var(--border);padding-top:8px;}
-.covLabel{font-size:10px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;font-family:'Jost',sans-serif;}
-.crow{display:flex;align-items:flex-start;gap:7px;font-size:13px;color:var(--ink2);margin-bottom:4px;line-height:1.4;font-family:'Jost',sans-serif;}
-.dg{width:7px;height:7px;border-radius:50%;background:#2d9e58;flex-shrink:0;margin-top:5px;}
-.dok{width:7px;height:7px;border-radius:50%;background:#c98a1a;flex-shrink:0;margin-top:5px;}
-.dw{width:7px;height:7px;border-radius:50%;background:#b83232;flex-shrink:0;margin-top:5px;}
-.snote{font-size:13px;color:var(--ink2);line-height:1.75;margin-top:8px;border-top:1px solid var(--border);padding-top:8px;font-family:'Jost',sans-serif;}
-.leg{display:flex;gap:14px;font-size:12px;color:var(--ink3);margin-top:8px;font-family:'Jost',sans-serif;}
-.legdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:middle;}
+.sbar{margin:8px 0;}
+.sbl{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-bottom:4px;}
+.sbg{height:5px;background:var(--paper);border-radius:3px;overflow:hidden;border:1px solid var(--border);}
+.sbf{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--wine-mid),var(--wine));}
+.covWrap{margin-top:10px;border-top:1px solid var(--border);padding-top:10px;}
+.covLabel{font-size:10px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;}
+.crow{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--ink2);margin-bottom:5px;line-height:1.5;}
+.dg{width:8px;height:8px;border-radius:50%;background:#2d9e58;flex-shrink:0;margin-top:4px;}
+.dok{width:8px;height:8px;border-radius:50%;background:#c98a1a;flex-shrink:0;margin-top:4px;}
+.dw{width:8px;height:8px;border-radius:50%;background:#b83232;flex-shrink:0;margin-top:4px;}
+.snote{font-size:13px;color:var(--ink2);line-height:1.75;margin-top:10px;border-top:1px solid var(--border);padding-top:10px;}
+.leg{display:flex;gap:14px;font-size:12px;color:var(--ink3);margin-top:10px;flex-wrap:wrap;}
+.legdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle;}
 
 /* Loading & errors */
-.loading{text-align:center;padding:3rem;color:var(--ink3);font-size:14px;}
-.spin{width:26px;height:26px;border:1.5px solid var(--border2);border-top-color:var(--wine);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 14px;}
+.loading{text-align:center;padding:3rem 1rem;color:var(--ink3);}
+.spin{width:28px;height:28px;border:2px solid var(--border2);border-top-color:var(--wine);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 14px;}
 .loading-text{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:var(--ink2);}
 @keyframes spin{to{transform:rotate(360deg)}}
-.err{background:var(--red-bg);border:1px solid #e8b8bc;color:var(--red-text);padding:12px 16px;border-radius:10px;font-size:13px;margin-top:1rem;line-height:1.6;font-family:'Jost',sans-serif;}
-
-@media(max-width:600px){
-  .grid2{grid-template-columns:1fr;}
-  .price-row{grid-template-columns:1fr 1fr;}
-  .page{padding:1.5rem .75rem 4rem;}
-}
+.err{background:var(--red-bg);border:1px solid #e8b8bc;color:var(--red-text);padding:14px 16px;border-radius:10px;font-size:13px;margin-top:1rem;line-height:1.6;}
 </style>
 </head>
 <body>
@@ -185,14 +181,14 @@ input[type=range]{width:100%;accent-color:var(--wine);cursor:pointer;}
 
   <!-- Header -->
   <div class="header">
-    <h1>SOMM <span>by Stu</span></h1>
+    <h1>SOMM <span class="by">by Stu</span></h1>
     <p class="tagline">a wine p<span class="tagline-ai">ai</span>ring app</p>
   </div>
 
-  <!-- API Key -->
+  <!-- API Key Setup -->
   <div class="setup" id="setupCard">
     <h2>One-time setup</h2>
-    <p>Enter your Anthropic API key — saved only in your browser. Get one at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys.</p>
+    <p>Enter your Anthropic API key — saved only in your browser. Get one free at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys.</p>
     <div class="key-row">
       <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
       <button class="save-btn" onclick="saveKey()">Save</button>
@@ -200,8 +196,8 @@ input[type=range]{width:100%;accent-color:var(--wine);cursor:pointer;}
     <div class="key-status no" id="keyStatus">No key saved yet</div>
   </div>
 
-  <!-- Menu & Wine List inputs -->
-  <div class="grid2" style="margin-bottom:1rem">
+  <!-- Menu & Wine inputs -->
+  <div class="grid2">
     <div class="card">
       <span class="slabel">Food Menu</span>
       <div class="stabs" id="stabs-menu"></div>
@@ -220,42 +216,10 @@ input[type=range]{width:100%;accent-color:var(--wine);cursor:pointer;}
     </div>
   </div>
 
-  <!-- Extract dishes -->
-  <div class="card">
-    <span class="slabel">Dishes</span>
-    <button class="exBtn" id="exBtn" onclick="extractDishes()">✦ Extract dishes from menu</button>
-    <div id="dishGridWrap" style="display:none">
-      <p class="hint" style="margin-bottom:8px">Dishes extracted — select them per course below</p>
-      <div class="dishGrid" id="dishGrid"></div>
-      <div class="manRow">
-        <input type="text" id="manDish" placeholder="Or type a dish name and press Add">
-        <button class="secBtn" onclick="addManualDish()">Add</button>
-      </div>
-    </div>
-    <div id="noExtractWrap" style="display:none">
-      <div class="manRow" style="margin-top:0">
-        <input type="text" id="manDish2" placeholder="Type a dish name and press Add">
-        <button class="secBtn" onclick="addManualDish2()">Add</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- By the glass toggle -->
-  <div class="glass-toggle-wrap">
-    <div class="glass-toggle-label">
-      By the glass
-      <small>Show individual glass pairings per dish instead of a bottle per course</small>
-    </div>
-    <label class="toggle-switch">
-      <input type="checkbox" id="byGlassToggle">
-      <span class="toggle-slider"></span>
-    </label>
-  </div>
-
   <!-- Courses -->
   <div id="coursesWrap"></div>
 
-  <!-- Add course button -->
+  <!-- Add course -->
   <button class="add-course-btn" id="addCourseBtn" onclick="addCourse()">+ Add Another Course</button>
 
   <!-- Get pairings -->
@@ -265,433 +229,498 @@ input[type=range]{width:100%;accent-color:var(--wine);cursor:pointer;}
 </div>
 
 <script>
-// ── State ──
-const S={};
-['menu','wine'].forEach(k=>S[k]={mode:'text',img:null,imgType:null,pdf:null});
-let allDishes=[];
-let courses=[];
-let courseCounter=0;
+// ─────────────────────────────────────────
+// State
+// ─────────────────────────────────────────
+const S = {};
+['menu','wine'].forEach(k => S[k] = {mode:'text', img:null, imgType:null, pdf:null});
+let courses = [];
+let courseCounter = 0;
 
-// ── API Key ──
-function getKey(){return localStorage.getItem('somm_stu_key')||'';}
-function saveKey(){
-  const v=document.getElementById('apiKeyInput').value.trim();
-  if(!v){updateKeyStatus('Please enter a valid key','no');return;}
-  localStorage.setItem('somm_stu_key',v);
-  updateKeyStatus('✓ Key saved','ok');
-  document.getElementById('setupCard').style.display='none';
+// ─────────────────────────────────────────
+// API Key
+// ─────────────────────────────────────────
+function getKey() { return localStorage.getItem('somm_stu_v3') || ''; }
+function saveKey() {
+  const v = document.getElementById('apiKeyInput').value.trim();
+  if (!v) { setKeyStatus('Please enter a valid key', 'no'); return; }
+  localStorage.setItem('somm_stu_v3', v);
+  setKeyStatus('✓ Key saved', 'ok');
+  document.getElementById('setupCard').style.display = 'none';
 }
-function updateKeyStatus(msg,cls){const el=document.getElementById('keyStatus');el.textContent=msg;el.className='key-status '+cls;}
-window.addEventListener('load',()=>{
-  const k=getKey();
-  if(k){updateKeyStatus('✓ Key saved','ok');document.getElementById('setupCard').style.display='none';document.getElementById('apiKeyInput').value=k;}
+function setKeyStatus(msg, cls) {
+  const el = document.getElementById('keyStatus');
+  el.textContent = msg;
+  el.className = 'key-status ' + cls;
+}
+
+// ─────────────────────────────────────────
+// Init
+// ─────────────────────────────────────────
+window.addEventListener('load', () => {
+  const k = getKey();
+  if (k) {
+    setKeyStatus('✓ Key saved', 'ok');
+    document.getElementById('setupCard').style.display = 'none';
+    document.getElementById('apiKeyInput').value = k;
+  }
   buildSourceTabs('menu');
   buildSourceTabs('wine');
   addCourse();
 });
 
-// ── Source tabs ──
-function buildSourceTabs(side){
-  const c=document.getElementById('stabs-'+side);
-  [['text','Text'],['photo','Photo'],['pdf','PDF'],['url','Link']].forEach(([k,l],i)=>{
-    const b=document.createElement('button');
-    b.className='sBtn'+(i===0?' on':'');
-    b.textContent=l;
-    b.addEventListener('click',()=>{
-      S[side].mode=k;
-      c.querySelectorAll('.sBtn').forEach(x=>x.classList.remove('on'));
+// ─────────────────────────────────────────
+// Source tabs
+// ─────────────────────────────────────────
+function buildSourceTabs(side) {
+  const c = document.getElementById('stabs-' + side);
+  [['text','Text'],['photo','Photo'],['pdf','PDF'],['url','Link']].forEach(([k,l], i) => {
+    const b = document.createElement('button');
+    b.className = 'sBtn' + (i === 0 ? ' on' : '');
+    b.textContent = l;
+    b.addEventListener('click', () => {
+      S[side].mode = k;
+      c.querySelectorAll('.sBtn').forEach(x => x.classList.remove('on'));
       b.classList.add('on');
-      ['text','photo','pdf','url'].forEach(t=>{
-        const el=document.getElementById('sp-'+side+'-'+t);
-        if(el)el.classList.toggle('on',t===k);
+      ['text','photo','pdf','url'].forEach(t => {
+        const el = document.getElementById('sp-' + side + '-' + t);
+        if (el) el.classList.toggle('on', t === k);
       });
     });
     c.appendChild(b);
   });
 }
 
-// ── File handlers ──
-function onImg(side,input){
-  const file=input.files[0];if(!file)return;
-  S[side].imgType=file.type||'image/jpeg';
-  const r=new FileReader();
-  r.onload=e=>{S[side].img=e.target.result.split(',')[1];const t=document.getElementById('thumb-'+side);if(t){t.src=e.target.result;t.style.display='block';}};
+// ─────────────────────────────────────────
+// File handlers
+// ─────────────────────────────────────────
+function onImg(side, input) {
+  const file = input.files[0]; if (!file) return;
+  S[side].imgType = file.type || 'image/jpeg';
+  const r = new FileReader();
+  r.onload = e => {
+    S[side].img = e.target.result.split(',')[1];
+    const t = document.getElementById('thumb-' + side);
+    if (t) { t.src = e.target.result; t.style.display = 'block'; }
+  };
   r.readAsDataURL(file);
 }
-function onPdf(side,input){
-  const file=input.files[0];if(!file)return;
-  const r=new FileReader();
-  r.onload=e=>{S[side].pdf=e.target.result.split(',')[1];const b=document.getElementById('badge-'+side);if(b)b.innerHTML=`<div class="fbadge">✓ ${file.name}</div>`;};
+function onPdf(side, input) {
+  const file = input.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = e => {
+    S[side].pdf = e.target.result.split(',')[1];
+    const b = document.getElementById('badge-' + side);
+    if (b) b.innerHTML = `<div class="fbadge">✓ ${file.name}</div>`;
+  };
   r.readAsDataURL(file);
 }
 
-// ── Get content ──
-async function getContent(side){
-  const label=side==='menu'?'food menu':'wine list';
-  const m=S[side].mode;
-  if(m==='text'){const el=document.getElementById(side+'-text');const v=el?el.value.trim():'';if(!v)throw new Error(`Please enter the ${label}.`);return{type:'text',value:v};}
-  if(m==='photo'){if(!S[side].img)throw new Error(`Please upload a photo for the ${label}.`);return{type:'image',value:S[side].img,mimeType:S[side].imgType||'image/jpeg'};}
-  if(m==='pdf'){if(!S[side].pdf)throw new Error(`Please upload a PDF for the ${label}.`);return{type:'pdf',value:S[side].pdf};}
-  if(m==='url'){const el=document.getElementById(side+'-url');const url=el?el.value.trim():'';if(!url)throw new Error(`Please enter a URL for the ${label}.`);setR('<div class="loading"><div class="spin"></div><div class="loading-text">Fetching '+label+'...</div></div>');const text=await fetchUrl(url);return{type:'text',value:text};}
+// ─────────────────────────────────────────
+// Get content
+// ─────────────────────────────────────────
+async function getContent(side) {
+  const label = side === 'menu' ? 'food menu' : 'wine list';
+  const m = S[side].mode;
+  if (m === 'text') {
+    const v = document.getElementById(side + '-text')?.value.trim();
+    if (!v) throw new Error('Please enter the ' + label + '.');
+    return { type:'text', value:v };
+  }
+  if (m === 'photo') {
+    if (!S[side].img) throw new Error('Please upload a photo for the ' + label + '.');
+    return { type:'image', value:S[side].img, mimeType:S[side].imgType || 'image/jpeg' };
+  }
+  if (m === 'pdf') {
+    if (!S[side].pdf) throw new Error('Please upload a PDF for the ' + label + '.');
+    return { type:'pdf', value:S[side].pdf };
+  }
+  if (m === 'url') {
+    const url = document.getElementById(side + '-url')?.value.trim();
+    if (!url) throw new Error('Please enter a URL for the ' + label + '.');
+    setR(loadingHTML('Fetching ' + label + '...'));
+    return { type:'text', value: await fetchUrl(url) };
+  }
 }
 
-// ── URL fetch ──
-function cleanHtml(h){return h.replace(/<style[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<script[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').replace(/\s{2,}/g,' ').trim().slice(0,10000);}
-async function fetchUrl(url){
-  const proxies=[
-    ()=>fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`).then(r=>r.json()).then(d=>d.contents),
-    ()=>fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`).then(r=>r.text()),
-    ()=>fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`).then(r=>r.text())
+// ─────────────────────────────────────────
+// URL fetch with multiple proxy fallbacks
+// ─────────────────────────────────────────
+function cleanHtml(h) {
+  return h
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ')
+    .replace(/\s{2,}/g, ' ').trim().slice(0, 12000);
+}
+async function fetchUrl(url) {
+  const proxies = [
+    () => fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`).then(r => r.json()).then(d => d.contents),
+    () => fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`).then(r => r.text()),
+    () => fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`).then(r => r.text())
   ];
-  for(const proxy of proxies){
-    try{const text=await Promise.race([proxy(),new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),8000))]);if(text&&text.length>100)return cleanHtml(text);}catch(e){continue;}
+  for (const proxy of proxies) {
+    try {
+      const text = await Promise.race([proxy(), new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 8000))]);
+      if (text && text.length > 100) return cleanHtml(text);
+    } catch(e) { continue; }
   }
-  throw new Error('Could not fetch that URL. Please switch to Text mode and paste the menu text directly.');
+  throw new Error('Could not fetch that URL. Please switch to Text mode and paste the menu directly.');
 }
 
-// ── Extract dishes ──
-async function extractDishes(){
-  const btn=document.getElementById('exBtn');
-  btn.disabled=true;btn.textContent='Extracting...';
-  let mc;
-  try{mc=await getContent('menu');}
-  catch(e){showErr(e.message);btn.disabled=false;btn.textContent='✦ Extract dishes from menu';return;}
-  try{
-    const raw=await claude(
-      `You are a menu parser. Extract ONLY actual food and drink items a customer would order from this restaurant menu. Do NOT include navigation text, page headers, restaurant name, address, phone, social media links, hours, policies, staff names, or any non-food text. ONLY real dishes and drinks.
-CRITICAL: Return ONLY a raw JSON array. No markdown, no backticks, no explanation, no text before or after. Start with [ and end with ].
-Each element: {"name":"dish name","desc":"ingredients or short description, empty string if none"}
-Example: [{"name":"Linguine Vongole","desc":"briny clams, peperoncino, lemon"},{"name":"Tiramisu","desc":"mascarpone, espresso"}]`,
-      [mc,{type:'text',value:'Extract only real food and drink items. Start your response with ['}]
-    );
-    let parsed;
-    const cleaned=raw.replace(/```json/g,'').replace(/```/g,'').trim();
-    // Robust JSON cleaner — fixes common LLM JSON issues
-    function cleanJSON(str){
-      const start=str.indexOf('[');
-      const end=str.lastIndexOf(']');
-      if(start===-1||end===-1)throw new Error('No JSON array found');
-      let s=str.substring(start,end+1);
-      // Fix unescaped quotes inside string values
-      s=s.replace(/"desc":\s*"([^"]*)"/g,(m,v)=>'"desc":"'+v.replace(/"/g,'\\"')+'"');
-      // Fix trailing commas before ] or }
-      s=s.replace(/,\s*([\]\}])/g,'$1');
-      return s;
-    }
-    try{
-      const s=cleanJSON(cleaned);
-      parsed=JSON.parse(s);
-    }catch(e){
-      // Last resort — extract just name fields
-      const names=cleaned.match(/"name"\s*:\s*"([^"]+)"/g)||[];
-      if(!names.length)throw new Error('Could not parse dish list: '+e.message);
-      parsed=names.map(n=>{const m=n.match(/"name"\s*:\s*"([^"]+)"/);return{name:m?m[1]:'',desc:''};});
-    }
-    allDishes=parsed.slice(0,60).map(d=>
-      typeof d==='string'?{name:d,desc:''}:
-      d&&d.name?{name:String(d.name),desc:String(d.desc||d.description||'')}:null
-    ).filter(Boolean);
-    if(!allDishes.length)throw new Error('No dishes found — try pasting the menu as text');
-    renderDishGrid();
-    // Force re-render all course dish grids now that we have dishes
-    courses.forEach(c=>renderCourseDishGrid(c.id));
-  }catch(e){showErr('Could not extract dishes: '+e.message);}
-  btn.disabled=false;btn.textContent='✦ Re-extract dishes';
-}
-
-function renderDishGrid(){
-  const g=document.getElementById('dishGrid');
-  g.innerHTML='';
-  const totalPicked=courses.reduce((n,c)=>n+c.picked.length,0);
-  allDishes.forEach(d=>{
-    const el=document.createElement('div');
-    const isPickedAnywhere=courses.some(c=>c.picked.find(p=>p.name===d.name));
-    el.className='dchip'+(isPickedAnywhere?' picked':'');
-    el.innerHTML=`<div style="font-weight:500;font-size:13px">${d.name}</div>${d.desc?`<div style="font-size:11px;opacity:.65;margin-top:2px;line-height:1.3">${d.desc}</div>`:''}`;
-    el.addEventListener('click',()=>{
-      // clicking a dish in the global grid doesn't do anything — selection is per course
-    });
-    g.appendChild(el);
+// ─────────────────────────────────────────
+// Claude API
+// ─────────────────────────────────────────
+function buildMsgs(parts) {
+  return parts.map(c => {
+    if (c.type === 'text') return { type:'text', text:c.value };
+    if (c.type === 'image') return { type:'image', source:{ type:'base64', media_type:c.mimeType||'image/jpeg', data:c.value }};
+    if (c.type === 'pdf') return { type:'document', source:{ type:'base64', media_type:'application/pdf', data:c.value }};
+    return { type:'text', text:'' };
   });
-  document.getElementById('dishGridWrap').style.display='block';
-  document.getElementById('noExtractWrap').style.display='none';
-  // re-render all course dish grids
-  courses.forEach(c=>renderCourseDishGrid(c.id));
+}
+async function callClaude(system, parts) {
+  const key = getKey();
+  if (!key) throw new Error('Please enter your Anthropic API key at the top of the page.');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 4096,
+      system,
+      messages: [{ role:'user', content:buildMsgs(parts) }]
+    })
+  });
+  if (!res.ok) { const t = await res.text(); throw new Error(`API error (${res.status}): ${t.slice(0,200)}`); }
+  const d = await res.json();
+  if (d.error) throw new Error(d.error.message);
+  return d.content?.map(i => i.text || '').join('') || '';
 }
 
-function addManualDish(){
-  const inp=document.getElementById('manDish');const v=inp.value.trim();
-  if(!v){return;}
-  if(!allDishes.find(d=>d.name===v))allDishes.push({name:v,desc:''});
-  renderDishGrid();
-  inp.value='';
-}
-function addManualDish2(){
-  const inp=document.getElementById('manDish2');const v=inp.value.trim();
-  if(!v)return;
-  if(!allDishes.find(d=>d.name===v))allDishes.push({name:v,desc:''});
-  document.getElementById('dishGridWrap').style.display='block';
-  document.getElementById('noExtractWrap').style.display='none';
-  renderDishGrid();inp.value='';
-}
-document.addEventListener('keydown',e=>{
-  if(e.key==='Enter'){
-    if(document.activeElement===document.getElementById('manDish'))addManualDish();
-    if(document.activeElement===document.getElementById('manDish2'))addManualDish2();
+// ─────────────────────────────────────────
+// JSON helpers
+// ─────────────────────────────────────────
+function safeParseArr(raw) {
+  const cleaned = raw.replace(/```json/g,'').replace(/```/g,'').trim();
+  const start = cleaned.indexOf('[');
+  const end = cleaned.lastIndexOf(']');
+  if (start === -1 || end === -1) throw new Error('No JSON array found in response');
+  let s = cleaned.substring(start, end + 1);
+  // Fix trailing commas
+  s = s.replace(/,(\s*[\]\}])/g, '$1');
+  try { return JSON.parse(s); }
+  catch(e) {
+    // last resort: pull name fields
+    const names = s.match(/"name"\s*:\s*"([^"]+)"/g) || [];
+    if (!names.length) throw new Error('Could not parse response: ' + e.message);
+    return names.map(n => { const m = n.match(/"name"\s*:\s*"([^"]+)"/); return { name: m ? m[1] : '', desc:'' }; });
   }
-});
+}
 
-// ── Courses ──
-const wineTypes=[
-  {id:'any',label:'No preference'},
-  {id:'red',label:'Red'},
-  {id:'white',label:'White'},
-  {id:'sparkling',label:'Sparkling & Rosé'},
-  {id:'dessert',label:'Dessert'},
+// ─────────────────────────────────────────
+// Course management
+// ─────────────────────────────────────────
+const wineTypes = [
+  { id:'any', label:'No preference' },
+  { id:'red', label:'Red' },
+  { id:'white', label:'White' },
+  { id:'sparkling', label:'Sparkling & Rosé' },
+  { id:'dessert', label:'Dessert' },
 ];
 
-function addCourse(){
-  if(courses.length>=4)return;
+function addCourse() {
+  if (courses.length >= 4) return;
   courseCounter++;
-  const id=courseCounter;
-  const course={id,picked:[],wineType:'any',priceMin:'',priceMax:''};
+  const course = { id:courseCounter, dishes:[], picked:[], wineType:'any', priceMin:'', priceMax:'', byGlass:false };
   courses.push(course);
   renderCourseCard(course);
   updateAddBtn();
 }
 
-function removeCourse(id){
-  if(courses.length<=1)return;
-  courses=courses.filter(c=>c.id!==id);
-  const el=document.getElementById('course-'+id);
-  if(el)el.remove();
+function removeCourse(id) {
+  courses = courses.filter(c => c.id !== id);
+  document.getElementById('course-' + id)?.remove();
   updateAddBtn();
 }
 
-function updateAddBtn(){
-  const btn=document.getElementById('addCourseBtn');
-  btn.disabled=courses.length>=4;
-  btn.textContent=courses.length>=4?'Maximum 4 courses reached':'+ Add Another Course';
+function updateAddBtn() {
+  const btn = document.getElementById('addCourseBtn');
+  btn.disabled = courses.length >= 4;
+  btn.textContent = courses.length >= 4 ? 'Maximum 4 courses reached' : '+ Add Another Course';
 }
 
-function renderCourseCard(course){
-  const wrap=document.getElementById('coursesWrap');
-  const div=document.createElement('div');
-  div.className='course-card';
-  div.id='course-'+course.id;
-  div.innerHTML=`
-    <div class="course-header">
-      <div class="course-title">Course ${course.id}</div>
-      ${courses.length>1||courseCounter>1?`<button class="remove-course" onclick="removeCourse(${course.id})" title="Remove course">×</button>`:''}
+function renderCourseCard(course) {
+  const wrap = document.getElementById('coursesWrap');
+  const div = document.createElement('div');
+  div.className = 'course-card';
+  div.id = 'course-' + course.id;
+
+  const removeBtn = courseCounter > 1 ? `<button class="remove-course" onclick="removeCourse(${course.id})">×</button>` : '';
+
+  div.innerHTML = `
+    <div class="course-bar">
+      <div class="course-bar-title">Course ${course.id}</div>
+      ${removeBtn}
     </div>
-    <span class="slabel">Select dishes for this course (up to 8)</span>
-    <div class="dishGrid" id="cdish-${course.id}" style="margin-bottom:10px"></div>
-    <div id="cpills-${course.id}" class="pillRow" style="margin-bottom:10px"></div>
-    <span class="slabel" style="margin-top:10px">Wine preference</span>
-    <div class="wine-type-grid" id="cwtype-${course.id}"></div>
-    <span class="slabel" style="margin-top:14px">Price range</span>
-    <div class="price-row">
-      <div>
-        <label>Min ($)</label>
-        <input type="number" id="cpmin-${course.id}" placeholder="Any" min="0" oninput="updateCourse(${course.id})">
+    <div class="course-body">
+      <button class="exBtn" id="exBtn-${course.id}" onclick="extractDishes(${course.id})">✦ Extract dishes from menu</button>
+      <div id="cdishWrap-${course.id}" style="display:none">
+        <span class="slabel">Select dishes for this course (up to 8)</span>
+        <div class="dishGrid" id="cdish-${course.id}"></div>
       </div>
-      <div>
-        <label>Max ($)</label>
-        <input type="number" id="cpmax-${course.id}" placeholder="Any" min="0" oninput="updateCourse(${course.id})">
+      <div id="cpills-${course.id}" class="pillRow"></div>
+      <div class="manRow">
+        <input type="text" id="cman-${course.id}" placeholder="Or type a dish name and press Add">
+        <button class="secBtn" onclick="addManualDish(${course.id})">Add</button>
       </div>
-    </div>
-  `;
+      <span class="slabel" style="margin-top:1rem">Wine preference</span>
+      <div class="wtype-wrap" id="cwtype-${course.id}"></div>
+      <span class="slabel" style="margin-top:1rem">Price range</span>
+      <div class="price-row">
+        <div><label>Min ($)</label><input type="number" id="cpmin-${course.id}" placeholder="Any" min="0" oninput="updateCourse(${course.id})"></div>
+        <div><label>Max ($)</label><input type="number" id="cpmax-${course.id}" placeholder="Any" min="0" oninput="updateCourse(${course.id})"></div>
+      </div>
+      <div class="course-glass-wrap" style="margin-top:1rem;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--paper);border:1px solid var(--border);border-radius:10px;">
+        <div>
+          <div style="font-size:14px;color:var(--ink);font-family:'Jost',sans-serif;">By the glass</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:2px;">Show top 2 glass options per dish</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="cglass-${course.id}" onchange="updateCourse(${course.id})">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>`;
+
   wrap.appendChild(div);
+
   // Build wine type buttons
-  const wtWrap=document.getElementById('cwtype-'+course.id);
-  wineTypes.forEach(wt=>{
-    const b=document.createElement('button');
-    b.className='wtype-btn'+(wt.id==='any'?' on':'');
-    b.textContent=wt.label;
-    b.dataset.wtype=wt.id;
-    b.addEventListener('click',()=>{
-      wtWrap.querySelectorAll('.wtype-btn').forEach(x=>x.classList.remove('on'));
+  const wtWrap = document.getElementById('cwtype-' + course.id);
+  wineTypes.forEach(wt => {
+    const b = document.createElement('button');
+    b.className = 'wtype-btn' + (wt.id === 'any' ? ' on' : '');
+    b.textContent = wt.label;
+    b.addEventListener('click', () => {
+      wtWrap.querySelectorAll('.wtype-btn').forEach(x => x.classList.remove('on'));
       b.classList.add('on');
-      course.wineType=wt.id;
+      course.wineType = wt.id;
     });
     wtWrap.appendChild(b);
   });
-  renderCourseDishGrid(course.id);
+
+  // Enter key on manual input
+  document.getElementById('cman-' + course.id)?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') addManualDish(course.id);
+  });
 }
 
-function renderCourseDishGrid(courseId){
-  const course=courses.find(c=>c.id===courseId);if(!course)return;
-  const g=document.getElementById('cdish-'+courseId);if(!g)return;
-  g.innerHTML='';
-  if(!allDishes.length){
-    g.innerHTML=`<p class="hint">Extract dishes from the menu above first, or add them manually.</p>`;
-    return;
-  }
-  allDishes.forEach((d,idx)=>{
-    const isPicked=course.picked.find(p=>p.name===d.name);
-    const el=document.createElement('div');
-    el.className='dchip'+(isPicked?' picked':(!isPicked&&course.picked.length>=8?' grey':''));
-    el.style.cursor='pointer';
-    el.dataset.idx=idx;
-    el.dataset.courseid=courseId;
-    el.innerHTML=`<div style="font-weight:500;font-size:13px;pointer-events:none">${d.name}</div>${d.desc?`<div style="font-size:11px;opacity:.65;margin-top:2px;line-height:1.3;pointer-events:none">${d.desc}</div>`:''}`;
-    el.onclick=function(){toggleCourseDish(parseInt(this.dataset.courseid),allDishes[parseInt(this.dataset.idx)]);};
+// ─────────────────────────────────────────
+// Extract dishes (per course)
+// ─────────────────────────────────────────
+async function extractDishes(courseId) {
+  const course = courses.find(c => c.id === courseId); if (!course) return;
+  const btn = document.getElementById('exBtn-' + courseId);
+  btn.disabled = true; btn.textContent = 'Extracting...';
+  let mc;
+  try { mc = await getContent('menu'); }
+  catch(e) { showErr(e.message); btn.disabled = false; btn.textContent = '✦ Extract dishes from menu'; return; }
+  try {
+    const raw = await callClaude(
+      `You are a menu parser. Extract ONLY the actual food and drink items a customer would order from this restaurant menu.
+Do NOT include: navigation links, page titles, section headers, restaurant name, address, phone numbers, social media, hours, policies, staff names, or any non-food content.
+CRITICAL: Return ONLY a raw JSON array. No markdown, no backticks, no explanation. Start with [ and end with ].
+Each element: {"name":"dish name","desc":"short description or key ingredients, empty string if none"}
+Example: [{"name":"Linguine Vongole","desc":"briny clams, peperoncino, lemon"},{"name":"Tiramisu","desc":"mascarpone, espresso, ladyfingers"}]`,
+      [mc, { type:'text', value:'Extract only real food and drink items. Start your response with [' }]
+    );
+    const parsed = safeParseArr(raw);
+    course.dishes = parsed.slice(0, 60).map(d =>
+      typeof d === 'string' ? { name:d, desc:'' } :
+      d && d.name ? { name:String(d.name), desc:String(d.desc || d.description || '') } : null
+    ).filter(Boolean);
+    if (!course.dishes.length) throw new Error('No dishes found — try pasting the menu text directly');
+    renderCourseDishGrid(courseId);
+  } catch(e) { showErr('Could not extract dishes: ' + e.message); }
+  btn.disabled = false; btn.textContent = '✦ Re-extract dishes';
+}
+
+function renderCourseDishGrid(courseId) {
+  const course = courses.find(c => c.id === courseId); if (!course) return;
+  const g = document.getElementById('cdish-' + courseId); if (!g) return;
+  const wrap = document.getElementById('cdishWrap-' + courseId);
+  if (!course.dishes.length) { if (wrap) wrap.style.display = 'none'; return; }
+  if (wrap) wrap.style.display = 'block';
+  g.innerHTML = '';
+  course.dishes.forEach((d, idx) => {
+    const isPicked = !!course.picked.find(p => p.name === d.name);
+    const isDisabled = !isPicked && course.picked.length >= 8;
+    const el = document.createElement('div');
+    el.className = 'dchip' + (isPicked ? ' picked' : (isDisabled ? ' grey' : ''));
+    el.dataset.idx = idx;
+    el.dataset.cid = courseId;
+    el.innerHTML = `<div style="font-weight:500;pointer-events:none">${d.name}</div>${d.desc ? `<div style="font-size:11px;opacity:.6;margin-top:2px;line-height:1.3;pointer-events:none">${d.desc}</div>` : ''}`;
+    el.onclick = function() {
+      const cid = parseInt(this.dataset.cid);
+      const i = parseInt(this.dataset.idx);
+      const c = courses.find(x => x.id === cid); if (!c) return;
+      const dish = c.dishes[i]; if (!dish) return;
+      const pidx = c.picked.findIndex(p => p.name === dish.name);
+      if (pidx > -1) { c.picked.splice(pidx, 1); }
+      else { if (c.picked.length >= 8) return; c.picked.push(dish); }
+      renderCourseDishGrid(cid);
+      renderCoursePills(cid);
+    };
     g.appendChild(el);
   });
 }
 
-function toggleCourseDish(courseId,dish){
-  const course=courses.find(c=>c.id===courseId);if(!course)return;
-  const idx=course.picked.findIndex(p=>p.name===dish.name);
-  if(idx>-1){course.picked.splice(idx,1);}
-  else{if(course.picked.length>=8)return;course.picked.push(dish);}
+function addManualDish(courseId) {
+  const course = courses.find(c => c.id === courseId); if (!course) return;
+  const inp = document.getElementById('cman-' + courseId);
+  const v = inp?.value.trim(); if (!v) return;
+  const dish = { name:v, desc:'' };
+  if (!course.dishes.find(d => d.name === v)) course.dishes.push(dish);
+  if (course.picked.length < 8 && !course.picked.find(p => p.name === v)) course.picked.push(dish);
+  renderCourseDishGrid(courseId);
+  renderCoursePills(courseId);
+  if (inp) inp.value = '';
+}
+
+function removeCourseDish(courseId, i) {
+  const course = courses.find(c => c.id === courseId); if (!course) return;
+  course.picked.splice(i, 1);
   renderCourseDishGrid(courseId);
   renderCoursePills(courseId);
 }
 
-function removeCourseDish(courseId,i){
-  const course=courses.find(c=>c.id===courseId);if(!course)return;
-  course.picked.splice(i,1);
-  renderCourseDishGrid(courseId);
-  renderCoursePills(courseId);
-}
-
-function renderCoursePills(courseId){
-  const course=courses.find(c=>c.id===courseId);if(!course)return;
-  const el=document.getElementById('cpills-'+courseId);if(!el)return;
-  el.innerHTML=course.picked.map((d,i)=>
+function renderCoursePills(courseId) {
+  const course = courses.find(c => c.id === courseId); if (!course) return;
+  const el = document.getElementById('cpills-' + courseId); if (!el) return;
+  el.innerHTML = course.picked.map((d, i) =>
     `<span class="spill">${d.name}<button onclick="removeCourseDish(${courseId},${i})">×</button></span>`
   ).join('');
 }
 
-function updateCourse(courseId){
-  const course=courses.find(c=>c.id===courseId);if(!course)return;
-  const pmin=document.getElementById('cpmin-'+courseId);
-  const pmax=document.getElementById('cpmax-'+courseId);
-  if(pmin)course.priceMin=pmin.value;
-  if(pmax)course.priceMax=pmax.value;
+function updateCourse(courseId) {
+  const course = courses.find(c => c.id === courseId); if (!course) return;
+  course.priceMin = document.getElementById('cpmin-' + courseId)?.value || '';
+  course.priceMax = document.getElementById('cpmax-' + courseId)?.value || '';
+  course.byGlass = document.getElementById('cglass-' + courseId)?.checked || false;
 }
 
-// ── Claude API ──
-function buildClaudeMsgs(contentParts){
-  return contentParts.map(c=>{
-    if(c.type==='text')return{type:'text',text:c.value};
-    if(c.type==='image')return{type:'image',source:{type:'base64',media_type:c.mimeType||'image/jpeg',data:c.value}};
-    if(c.type==='pdf')return{type:'document',source:{type:'base64',media_type:'application/pdf',data:c.value}};
-    return{type:'text',text:''};
-  });
-}
-async function claude(systemPrompt,contentParts){
-  const key=getKey();
-  if(!key)throw new Error('Please enter your Anthropic API key at the top of the page.');
-  const res=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4096,system:systemPrompt,messages:[{role:'user',content:buildClaudeMsgs(contentParts)}]})
-  });
-  if(!res.ok){const t=await res.text();throw new Error(`API error (${res.status}): ${t.slice(0,200)}`);}
-  const d=await res.json();
-  if(d.error)throw new Error(d.error.message);
-  return d.content?.map(i=>i.text||'').join('')||'';
-}
-function parseArr(raw){const m=raw.match(/\[[\s\S]*\]/);if(!m)throw new Error('No JSON array in response');return JSON.parse(m[0]);}
-
-// ── Helpers ──
-function setR(html){document.getElementById('results').innerHTML=html;}
-function showErr(msg){setR(`<div class="err">${msg}</div>`);}
-function loading(msg){setR(`<div class="loading"><div class="spin"></div><div class="loading-text">${msg||'Consulting the sommelier...'}</div></div>`);}
-
-const TC={
-  'Red':`background:var(--red-bg);color:var(--red-text)`,
-  'White':`background:var(--blue-bg);color:var(--blue-text)`,
-  'Rosé':`background:var(--amber-bg);color:var(--amber-text)`,
-  'Sparkling':`background:var(--green-bg);color:var(--green-text)`,
-  'Dessert':`background:var(--amber-bg);color:var(--amber-text)`,
-  'Fortified':`background:var(--red-bg);color:var(--red-text)`,
-  'Orange':`background:var(--amber-bg);color:var(--amber-text)`
+// ─────────────────────────────────────────
+// Badge styles
+// ─────────────────────────────────────────
+const TC = {
+  'Red': 'background:var(--red-bg);color:var(--red-text)',
+  'White': 'background:var(--blue-bg);color:var(--blue-text)',
+  'Rosé': 'background:var(--amber-bg);color:var(--amber-text)',
+  'Sparkling': 'background:var(--green-bg);color:var(--green-text)',
+  'Dessert': 'background:var(--amber-bg);color:var(--amber-text)',
+  'Fortified': 'background:var(--red-bg);color:var(--red-text)',
+  'Orange': 'background:var(--amber-bg);color:var(--amber-text)'
 };
 
-// ── Run all courses ──
-async function runAllCourses(){
-  // Validate
-  const hasDishes=courses.some(c=>c.picked.length>0);
-  if(!hasDishes){showErr('Please select at least one dish in one of your courses.');return;}
-  const btn=document.getElementById('mainBtn');
-  btn.disabled=true;btn.textContent='Working...';
-  loading('Preparing your selections...');
-  let mc,wc;
-  try{mc=await getContent('menu');wc=await getContent('wine');}
-  catch(e){showErr(e.message);btn.disabled=false;btn.textContent='Get Pairings';return;}
-  const byGlass=document.getElementById('byGlassToggle').checked;
-  let html='';
-  for(const course of courses){
-    if(!course.picked.length)continue;
-    loading(`Pairing Course ${course.id}...`);
-    try{
-      const dishList=course.picked.map(d=>d.desc?`${d.name} (${d.desc})`:d.name).join(', ');
-      const wtLabel=wineTypes.find(w=>w.id===course.wineType)?.label||'';
-      const typeFilter=course.wineType!=='any'?`Only suggest ${wtLabel} wines.`:'';
-      const priceFilter=course.priceMin||course.priceMax?`Only suggest wines priced${course.priceMin?' above $'+course.priceMin:''}${course.priceMin&&course.priceMax?' and':''}${course.priceMax?' below $'+course.priceMax:''}.`:'';
-      const glassFilter=byGlass?'Only suggest wines available by the glass. Show the top 2 best by-the-glass options per dish.':'';
-      let raw,arr;
-      if(byGlass){
-        raw=await claude(
+// ─────────────────────────────────────────
+// Run all courses
+// ─────────────────────────────────────────
+async function runAllCourses() {
+  const activeCourses = courses.filter(c => c.picked.length > 0);
+  if (!activeCourses.length) { showErr('Please select at least one dish in a course first.'); return; }
+  const btn = document.getElementById('mainBtn');
+  btn.disabled = true; btn.textContent = 'Working...';
+  setR(loadingHTML('Preparing your selections...'));
+  let mc, wc;
+  try { mc = await getContent('menu'); wc = await getContent('wine'); }
+  catch(e) { showErr(e.message); btn.disabled = false; btn.textContent = 'Get Pairings'; return; }
+  // byGlass is per-course
+  let html = '';
+  for (const course of activeCourses) {
+    setR(loadingHTML(`Pairing Course ${course.id}...`));
+    try {
+      const dishList = course.picked.map(d => d.desc ? `${d.name} (${d.desc})` : d.name).join(', ');
+      const wtLabel = wineTypes.find(w => w.id === course.wineType)?.label || '';
+      const typeFilter = course.wineType !== 'any' ? `Only suggest ${wtLabel} wines.` : '';
+      const priceFilter = course.priceMin || course.priceMax
+        ? `Only suggest wines priced${course.priceMin ? ' above $' + course.priceMin : ''}${course.priceMin && course.priceMax ? ' and' : ''}${course.priceMax ? ' below $' + course.priceMax : ''}.`
+        : '';
+      const glassFilter = byGlass ? 'Only suggest wines available by the glass. Show the top 2 best by-the-glass options per dish.' : '';
+
+      const byGlass = course.byGlass;
+      if (byGlass) {
+        const raw = await callClaude(
           `You are a world-class sommelier. For each dish, suggest the top 2 wines available by the glass from the wine list.
 ${typeFilter} ${priceFilter} ${glassFilter}
-Return ONLY a valid JSON array, no markdown. Each object:
-- "dish": string (dish name)
-- "pairings": array of 2 objects, each with "wine"(string),"type"(string),"price"(string),"note"(1-2 sentences why it works)
+Return ONLY a valid JSON array, no markdown, no preamble.
+Each object: {"dish":"dish name","pairings":[{"wine":"exact wine name","type":"Red|White|Rosé|Sparkling|Dessert|Fortified","price":"$XX","note":"1-2 sentences why it works"}]}
 Food menu:`,
-          [mc,{type:'text',value:'Wine list:'},wc,{type:'text',value:`Dishes for this course: ${dishList}. Return only the JSON array.`}]
+          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}. Return only the JSON array.`}]
         );
-        arr=parseArr(raw);
-        html+=`<div class="course-results"><div class="course-results-title">Course ${course.id} — By the Glass</div>`;
-        arr.forEach(p=>{
-          html+=`<div class="pcard"><div class="dname">${p.dish}</div>`;
-          (p.pairings||[]).forEach((pair,pi)=>{
-            const style=TC[pair.type]||TC['White'];
-            html+=`<div class="wrow" style="margin-bottom:4px"><span style="font-size:11px;color:var(--ink3);min-width:16px">${pi+1}.</span><span class="wname">${pair.wine}</span>${pair.price?`<span class="wprice">${pair.price}</span>`:''}<span class="wbadge" style="${style}">${pair.type}</span></div>`;
-            if(pair.note)html+=`<p style="font-size:12px;color:var(--ink3);font-family:'Jost',sans-serif;margin-left:20px;margin-bottom:6px;line-height:1.5">${pair.note}</p>`;
+        const arr = safeParseArr(raw);
+        html += `<div class="course-results"><div class="course-results-title">Course ${course.id} — By the Glass</div>`;
+        arr.forEach(p => {
+          html += `<div class="pcard"><div class="dname">${p.dish}</div>`;
+          (p.pairings || []).forEach((pair, pi) => {
+            const style = TC[pair.type] || TC['White'];
+            html += `<div class="wrow"><span style="font-size:11px;color:var(--ink3);min-width:16px">${pi+1}.</span><span class="wname">${pair.wine}</span>${pair.price ? `<span class="wprice">${pair.price}</span>` : ''}<span class="wbadge" style="${style}">${pair.type}</span></div>`;
+            if (pair.note) html += `<p style="font-size:13px;color:var(--ink3);margin-left:20px;margin-bottom:6px;line-height:1.6;font-family:'Jost',sans-serif">${pair.note}</p>`;
           });
-          html+=`</div>`;
+          html += `</div>`;
         });
-        html+=`</div>`;
+        html += `</div>`;
       } else {
-        // Bottle mode — one bottle for the whole course
-        raw=await claude(
-          `You are a world-class sommelier helping choose one bottle for a course of dishes.
+        const raw = await callClaude(
+          `You are a world-class sommelier helping choose the best bottle for a course of dishes.
 ${typeFilter} ${priceFilter}
-Return ONLY a valid JSON array of 3-6 wines from the list ranked best-first, no markdown. Each object:
-- "wine": string (exact name from list)
-- "type": one of "Red","White","Rosé","Sparkling","Dessert","Fortified"
-- "price": string (price from list)
-- "score": integer 1-100
-- "sommelier_note": string (2-3 sentences)
-- "dish_coverage": array of {"dish":string,"fit":"excellent"|"good"|"passable","note":"one sentence"}
+Return ONLY a valid JSON array of 3-6 wines from the list ranked best-first, no markdown.
+Each object: {"wine":"exact name from list","type":"Red|White|Rosé|Sparkling|Dessert|Fortified","price":"$XX","score":1-100,"sommelier_note":"2-3 sentences","dish_coverage":[{"dish":"dish name","fit":"excellent|good|passable","note":"one sentence"}]}
 Food menu:`,
-          [mc,{type:'text',value:'Wine list:'},wc,{type:'text',value:`Dishes for this course: ${dishList}. Return only the JSON array ranked best-first.`}]
+          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}. Return only the JSON array ranked best-first.`}]
         );
-        arr=parseArr(raw);
-        const fd={excellent:'dg',good:'dok',passable:'dw'};
-        html+=`<div class="course-results"><div class="course-results-title">Course ${course.id}</div>`;
-        arr.forEach((w,i)=>{
-          const style=TC[w.type]||TC['White'];
-          const pct=Math.min(100,Math.max(0,w.score||0));
-          const cov=(w.dish_coverage||[]).map(d=>`<div class="crow"><div class="${fd[d.fit]||'dok'}"></div><div><strong>${d.dish}</strong> — ${d.note}</div></div>`).join('');
-          html+=`<div class="gcard">
-            <div class="ghead"><span class="gnum">${i+1}</span><span class="gwname">${w.wine}</span><span class="wbadge" style="${style};margin-left:2px">${w.type}</span>${w.price?`<span class="wprice" style="color:var(--gold);font-size:12px;font-family:'Jost',sans-serif">${w.price}</span>`:''}</div>
+        const arr = safeParseArr(raw);
+        const fd = { excellent:'dg', good:'dok', passable:'dw' };
+        html += `<div class="course-results"><div class="course-results-title">Course ${course.id}</div>`;
+        arr.forEach((w, i) => {
+          const style = TC[w.type] || TC['White'];
+          const pct = Math.min(100, Math.max(0, w.score || 0));
+          const cov = (w.dish_coverage || []).map(d =>
+            `<div class="crow"><div class="${fd[d.fit] || 'dok'}"></div><div><strong>${d.dish}</strong> — ${d.note}</div></div>`
+          ).join('');
+          html += `<div class="gcard">
+            <div class="ghead"><span class="gnum">${i+1}</span><span class="gwname">${w.wine}</span><span class="wbadge" style="${style};margin-left:2px">${w.type}</span>${w.price ? `<span class="wprice" style="color:var(--gold);font-size:12px;font-family:'Jost',sans-serif">${w.price}</span>` : ''}</div>
             <div class="sbar"><div class="sbl"><span>Course compatibility</span><span>${pct}/100</span></div><div class="sbg"><div class="sbf" style="width:${pct}%"></div></div></div>
-            ${cov?`<div class="covWrap"><div class="covLabel">How it pairs with each dish</div>${cov}</div>`:''}
-            <div class="snote">${w.sommelier_note||''}</div>
+            ${cov ? `<div class="covWrap"><div class="covLabel">How it pairs with each dish</div>${cov}</div>` : ''}
+            <div class="snote">${w.sommelier_note || ''}</div>
           </div>`;
         });
-        html+=`<div class="leg"><span><span class="legdot" style="background:#2d9e58"></span>Excellent</span><span><span class="legdot" style="background:#c98a1a"></span>Good</span><span><span class="legdot" style="background:#b83232"></span>Passable</span></div>`;
-        html+=`</div>`;
+        html += `<div class="leg">
+          <span><span class="legdot" style="background:#2d9e58"></span>Excellent</span>
+          <span><span class="legdot" style="background:#c98a1a"></span>Good</span>
+          <span><span class="legdot" style="background:#b83232"></span>Passable</span>
+        </div></div>`;
       }
-    }catch(e){html+=`<div class="err">Course ${course.id} error: ${e.message}</div>`;}
+    } catch(e) {
+      html += `<div class="err">Course ${course.id}: ${e.message}</div>`;
+    }
   }
-  setR(html||'<div class="err">No results — please select dishes for at least one course.</div>');
-  btn.disabled=false;btn.textContent='Get Pairings';
+  setR(html || '<div class="err">No results returned.</div>');
+  btn.disabled = false; btn.textContent = 'Get Pairings';
+}
+
+// ─────────────────────────────────────────
+// UI helpers
+// ─────────────────────────────────────────
+function setR(html) { document.getElementById('results').innerHTML = html; }
+function showErr(msg) { setR(`<div class="err">${msg}</div>`); }
+function loadingHTML(msg) {
+  return `<div class="loading"><div class="spin"></div><div class="loading-text">${msg || 'Consulting the sommelier...'}</div></div>`;
 }
 </script>
 </body>
