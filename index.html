@@ -418,17 +418,27 @@ function setR(html){document.getElementById('results').innerHTML=html;}
 function showErr(msg){setR(`<div class="err">${msg}</div>`);}
 function loading(msg){setR(`<div class="loading"><div class="spin"></div><div class="loading-text">${msg||'Consulting the sommelier...'}</div></div>`);}
 
-async function fetchUrl(url){
-  const res=await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
-  if(!res.ok)throw new Error(`Could not fetch page (${res.status})`);
-  const data=await res.json();
-  if(!data.contents)throw new Error('Page returned empty content');
-  return data.contents
+function cleanHtml(h){
+  return h
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi,'')
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi,'')
     .replace(/<[^>]+>/g,' ')
     .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ')
     .replace(/\s{2,}/g,' ').trim().slice(0,10000);
+}
+async function fetchUrl(url){
+  const proxies=[
+    ()=>fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`).then(r=>r.json()).then(d=>d.contents),
+    ()=>fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`).then(r=>r.text()),
+    ()=>fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`).then(r=>r.text())
+  ];
+  for(const proxy of proxies){
+    try{
+      const text=await Promise.race([proxy(),new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),8000))]);
+      if(text&&text.length>100)return cleanHtml(text);
+    }catch(e){continue;}
+  }
+  throw new Error('Could not fetch that URL. Please switch to Text mode and paste the menu text directly.');
 }
 
 async function getContent(side){
