@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sommelier — Wine Pairing</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#1c1814;
+  --ink2:#4a4540;
+  --ink3:#8a847c;
+  --paper:#f7f4ef;
+  --cream:#fffdf9;
+  --wine:#6b1f2a;
+  --wine-light:#f5eaec;
+  --wine-mid:#c0545f;
+  --gold:#b8935a;
+  --gold-light:#fdf6ec;
+  --border:#e2dcd4;
+  --border2:#cec7bc;
+  --green-bg:#edf5f0;
+  --green-text:#1a5c35;
+  --blue-bg:#eef3fb;
+  --blue-text:#1a3f7a;
+  --amber-bg:#fdf3e4;
+  --amber-text:#7a4d0a;
+  --red-bg:#faeced;
+  --red-text:#7a1f28;
+  --r:10px;
+  --rlg:16px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Jost',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
+
+/* ── Page ── */
+.page{max-width:900px;margin:0 auto;padding:3rem 1.5rem 5rem;}
+
+/* ── Header ── */
+.header{text-align:center;margin-bottom:3rem;position:relative;}
+.header::after{content:'';display:block;width:60px;height:1px;background:var(--gold);margin:1.5rem auto 0;}
+.eyebrow{font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem;font-weight:400;}
+.header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,6vw,56px);font-weight:300;color:var(--ink);line-height:1.1;margin-bottom:.5rem;}
+.header h1 em{font-style:italic;color:var(--wine);}
+.header p{font-size:14px;color:var(--ink3);letter-spacing:.02em;}
+
+/* ── Setup card ── */
+.setup{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.75rem;margin-bottom:2.5rem;position:relative;overflow:hidden;}
+.setup::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--wine),var(--gold));}
+.setup h2{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;margin-bottom:6px;}
+.setup p{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:14px;}
+.setup a{color:var(--wine);text-decoration:none;}
+.setup a:hover{text-decoration:underline;}
+.key-row{display:flex;gap:8px;align-items:center;}
+.key-row input{flex:1;padding:10px 14px;font-size:13px;font-family:'Jost',sans-serif;border:1px solid var(--border2);border-radius:8px;background:var(--paper);color:var(--ink);}
+.key-row input:focus{outline:none;border-color:var(--wine);}
+.save-btn{padding:10px 20px;background:var(--wine);color:#fff;border:none;border-radius:8px;font-size:13px;font-family:'Jost',sans-serif;cursor:pointer;white-space:nowrap;letter-spacing:.03em;}
+.save-btn:hover{background:#5a1a23;}
+.key-status{font-size:12px;margin-top:8px;font-family:'Jost',sans-serif;}
+.key-status.ok{color:var(--green-text);}
+.key-status.no{color:var(--red-text);}
+
+/* ── Mode tabs ── */
+.modes{display:flex;gap:3px;background:var(--border);border-radius:12px;padding:3px;width:fit-content;margin:0 auto 2.5rem;}
+.mBtn{padding:10px 20px;font-size:13px;font-family:'Jost',sans-serif;color:var(--ink3);cursor:pointer;border:none;background:none;border-radius:10px;letter-spacing:.03em;transition:all .15s;}
+.mBtn.on{background:var(--cream);color:var(--wine);font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.mBtn:hover:not(.on){color:var(--ink);}
+
+/* ── Panes ── */
+.pane{display:none;animation:fadeIn .2s ease;}
+.pane.on{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Grid ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+
+/* ── Cards ── */
+.card{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem;}
+.clabel{font-size:10px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:.15em;display:block;margin-bottom:12px;}
+
+/* ── Source tabs ── */
+.stabs{display:flex;gap:2px;background:var(--paper);border-radius:8px;padding:3px;margin-bottom:12px;}
+.sBtn{flex:1;padding:6px 4px;font-size:12px;font-family:'Jost',sans-serif;color:var(--ink3);cursor:pointer;border:none;background:none;border-radius:6px;text-align:center;transition:all .12s;letter-spacing:.02em;}
+.sBtn.on{background:var(--cream);color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.sp{display:none;}.sp.on{display:block;}
+
+/* ── Inputs ── */
+textarea{width:100%;height:155px;font-size:13px;font-family:'Jost',sans-serif;resize:vertical;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--paper);color:var(--ink);line-height:1.6;}
+textarea:focus{outline:none;border-color:var(--wine);}
+input[type=url],input[type=text]{width:100%;padding:10px 12px;font-size:13px;font-family:'Jost',sans-serif;border:1px solid var(--border);border-radius:8px;background:var(--paper);color:var(--ink);}
+input[type=url]:focus,input[type=text]:focus{outline:none;border-color:var(--wine);}
+.hint{font-size:12px;color:var(--ink3);margin-top:6px;line-height:1.5;}
+
+/* ── Drop zone ── */
+.dropzone{border:1.5px dashed var(--border2);border-radius:8px;padding:1.5rem;text-align:center;background:var(--paper);position:relative;min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:border-color .15s;}
+.dropzone:hover{border-color:var(--wine);}
+.dropzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.dropzone .dico{font-size:22px;}
+.dropzone p{font-size:12px;color:var(--ink3);font-family:'Jost',sans-serif;}
+.fbadge{display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green-text);font-size:12px;padding:4px 10px;border-radius:20px;margin-top:8px;font-family:'Jost',sans-serif;}
+.thumb{width:100%;max-height:110px;object-fit:cover;border-radius:8px;margin-top:8px;display:none;}
+
+/* ── Buttons ── */
+.bigBtn{width:100%;padding:14px;background:var(--wine);color:#fff;border:none;border-radius:10px;font-size:15px;font-family:'Cormorant Garamond',serif;font-weight:400;cursor:pointer;margin-top:1rem;letter-spacing:.04em;transition:all .15s;position:relative;overflow:hidden;}
+.bigBtn::after{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.05),rgba(0,0,0,.05));}
+.bigBtn:hover{background:#5a1a23;transform:translateY(-1px);box-shadow:0 4px 16px rgba(107,31,42,.3);}
+.bigBtn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+.secBtn{padding:8px 16px;font-size:13px;font-family:'Jost',sans-serif;border:1px solid var(--border2);border-radius:8px;background:none;color:var(--ink);cursor:pointer;transition:background .12s;}
+.secBtn:hover{background:var(--paper);}
+.exBtn{width:100%;padding:10px;font-size:13px;font-family:'Jost',sans-serif;background:var(--paper);border:1px solid var(--border);border-radius:8px;color:var(--ink2);cursor:pointer;margin-bottom:12px;transition:all .12s;}
+.exBtn:hover{border-color:var(--wine);color:var(--wine);background:var(--wine-light);}
+.exBtn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ── Dish chips ── */
+.dishGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:7px;margin-bottom:12px;max-height:240px;overflow-y:auto;padding-right:2px;}
+.dchip{padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'Jost',sans-serif;color:var(--ink2);cursor:pointer;background:var(--cream);line-height:1.3;user-select:none;transition:all .12s;}
+.dchip:hover{border-color:var(--wine);color:var(--wine);}
+.dchip.picked{background:var(--wine-light);color:var(--wine);border-color:var(--wine-mid);font-weight:500;}
+.dchip.grey{opacity:.35;pointer-events:none;}
+.manRow{display:flex;gap:8px;margin-bottom:10px;}
+.manRow input{flex:1;}
+.pillRow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;}
+.spill{display:inline-flex;align-items:center;gap:5px;background:var(--wine-light);color:var(--wine);font-size:12px;font-family:'Jost',sans-serif;padding:4px 10px;border-radius:20px;}
+.spill button{background:none;border:none;cursor:pointer;color:var(--wine-mid);font-size:15px;padding:0;line-height:1;}
+
+/* ── Section divider ── */
+.divider{font-size:10px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:.18em;margin:2.5rem 0 1.25rem;display:flex;align-items:center;gap:12px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── Pairing cards ── */
+.pcard{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.5rem;margin-bottom:.75rem;transition:box-shadow .15s;}
+.pcard:hover{box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.dname{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--ink);margin-bottom:4px;}
+.wrow{font-size:13px;color:var(--ink2);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'Jost',sans-serif;}
+.wname{font-weight:500;color:var(--ink);}
+.wprice{color:var(--gold);font-size:12px;}
+.wbadge{font-size:10px;padding:2px 9px;border-radius:20px;font-weight:500;font-family:'Jost',sans-serif;letter-spacing:.04em;}
+.rat{font-size:13px;color:var(--ink2);line-height:1.75;border-top:1px solid var(--border);padding-top:10px;margin-top:10px;font-family:'Jost',sans-serif;}
+.tags{margin-bottom:2px;}
+.tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;background:var(--paper);color:var(--ink3);border:1px solid var(--border);margin:2px 3px 2px 0;font-family:'Jost',sans-serif;}
+.alts{margin-top:8px;font-size:12px;color:var(--ink3);font-family:'Jost',sans-serif;}
+.alts b{color:var(--ink2);}
+
+/* ── Group cards ── */
+.gcard{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.5rem;margin-bottom:.75rem;}
+.ghead{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.gnum{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:var(--wine-light);border-radius:50%;font-size:13px;font-weight:500;color:var(--wine);flex-shrink:0;font-family:'Jost',sans-serif;}
+.gwname{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--ink);}
+.sbar{margin:8px 0;}
+.sbl{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-bottom:4px;font-family:'Jost',sans-serif;letter-spacing:.03em;}
+.sbg{height:4px;background:var(--paper);border-radius:2px;overflow:hidden;border:1px solid var(--border);}
+.sbf{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--wine-mid),var(--wine));}
+.covWrap{margin-top:10px;border-top:1px solid var(--border);padding-top:10px;}
+.covLabel{font-size:10px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;font-family:'Jost',sans-serif;}
+.crow{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--ink2);margin-bottom:5px;line-height:1.5;font-family:'Jost',sans-serif;}
+.dg{width:8px;height:8px;border-radius:50%;background:#2d9e58;flex-shrink:0;margin-top:5px;}
+.dok{width:8px;height:8px;border-radius:50%;background:#c98a1a;flex-shrink:0;margin-top:5px;}
+.dw{width:8px;height:8px;border-radius:50%;background:#b83232;flex-shrink:0;margin-top:5px;}
+.snote{font-size:13px;color:var(--ink2);line-height:1.75;margin-top:10px;border-top:1px solid var(--border);padding-top:10px;font-family:'Jost',sans-serif;}
+.ordbar{background:var(--gold-light);border:1px solid #e8d5b0;border-radius:10px;padding:10px 14px;margin-bottom:1.25rem;font-size:13px;color:var(--ink2);font-family:'Jost',sans-serif;}
+.ordbar b{color:var(--ink);}
+.leg{display:flex;gap:18px;font-size:12px;color:var(--ink3);margin-top:10px;font-family:'Jost',sans-serif;}
+.legdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+
+/* ── Suggestion cards ── */
+.scard{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.5rem;margin-bottom:.75rem;}
+.sname{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--ink);margin-bottom:4px;}
+.smeta{font-size:13px;color:var(--ink3);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'Jost',sans-serif;}
+.sprof{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.ppill{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--paper);color:var(--ink3);border:1px solid var(--border);font-family:'Jost',sans-serif;}
+.swhy{font-size:13px;color:var(--ink2);line-height:1.75;font-family:'Jost',sans-serif;}
+.askbox{margin-top:12px;padding:10px 14px;background:var(--gold-light);border-radius:8px;font-size:13px;color:var(--ink2);line-height:1.6;font-family:'Jost',sans-serif;border-left:2px solid var(--gold);}
+.askbox b{color:var(--ink);}
+.msum{background:var(--wine-light);border-radius:10px;padding:14px 16px;margin-bottom:1.75rem;font-size:14px;color:var(--wine);line-height:1.75;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;border-left:2px solid var(--wine-mid);}
+
+/* ── Loading & errors ── */
+.loading{text-align:center;padding:3.5rem;color:var(--ink3);font-size:14px;font-family:'Jost',sans-serif;}
+.spin{width:28px;height:28px;border:1.5px solid var(--border2);border-top-color:var(--wine);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 16px;}
+.loading-text{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:var(--ink2);}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err{background:#faeced;border:1px solid #e8b8bc;color:var(--red-text);padding:14px 18px;border-radius:10px;font-size:13px;margin-top:1rem;line-height:1.6;font-family:'Jost',sans-serif;}
+
+@media(max-width:600px){
+  .grid2{grid-template-columns:1fr;}
+  .modes{flex-wrap:wrap;width:100%;}
+  .mBtn{flex:1;text-align:center;font-size:12px;padding:9px 8px;}
+  .page{padding:2rem 1rem 4rem;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="eyebrow">AI Sommelier</div>
+    <h1>Wine <em>Pairing</em></h1>
+    <p>Per dish &nbsp;·&nbsp; Group bottle &nbsp;·&nbsp; Open suggestions</p>
+  </div>
+
+  <!-- API Key -->
+  <div class="setup" id="setupCard">
+    <h2>Setup your API key</h2>
+    <p>Enter your Google Gemini API key below. It's saved only in your browser and never shared with anyone. Get a free key at <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a> → Get API Key.</p>
+    <div class="key-row">
+      <input type="password" id="apiKeyInput" placeholder="AIzaSy...">
+      <button class="save-btn" onclick="saveKey()">Save</button>
+    </div>
+    <div class="key-status no" id="keyStatus">No key saved yet</div>
+  </div>
+
+  <!-- Modes -->
+  <div class="modes" id="modeRow"></div>
+
+  <!-- PER DISH -->
+  <div id="pane-individual" class="pane on">
+    <div class="grid2">
+      <div class="card">
+        <span class="clabel">Food Menu</span>
+        <div class="stabs" id="stabs-imenu"></div>
+        <div id="sp-imenu-text" class="sp on"><textarea id="imenu-text" placeholder="Paste the menu here..."></textarea></div>
+        <div id="sp-imenu-photo" class="sp"><div class="dropzone"><input type="file" accept="image/*" onchange="onImg('imenu',this)"><div class="dico">📷</div><p>Click or drag a photo</p></div><img id="thumb-imenu" class="thumb"></div>
+        <div id="sp-imenu-pdf" class="sp"><div class="dropzone"><input type="file" accept="application/pdf" onchange="onPdf('imenu',this)"><div class="dico">📄</div><p>Click or drag a PDF</p></div><div id="badge-imenu"></div></div>
+        <div id="sp-imenu-url" class="sp"><input type="url" id="imenu-url" placeholder="https://restaurant.com/menu"><p class="hint">Page will be fetched automatically</p></div>
+      </div>
+      <div class="card">
+        <span class="clabel">Wine List</span>
+        <div class="stabs" id="stabs-iwine"></div>
+        <div id="sp-iwine-text" class="sp on"><textarea id="iwine-text" placeholder="Paste the wine list here..."></textarea></div>
+        <div id="sp-iwine-photo" class="sp"><div class="dropzone"><input type="file" accept="image/*" onchange="onImg('iwine',this)"><div class="dico">📷</div><p>Click or drag a photo</p></div><img id="thumb-iwine" class="thumb"></div>
+        <div id="sp-iwine-pdf" class="sp"><div class="dropzone"><input type="file" accept="application/pdf" onchange="onPdf('iwine',this)"><div class="dico">📄</div><p>Click or drag a PDF</p></div><div id="badge-iwine"></div></div>
+        <div id="sp-iwine-url" class="sp"><input type="url" id="iwine-url" placeholder="https://restaurant.com/wine-list"><p class="hint">Page will be fetched automatically</p></div>
+      </div>
+    </div>
+    <button class="bigBtn" id="btn-individual" onclick="runIndividual()">Get Pairings</button>
+  </div>
+
+  <!-- GROUP -->
+  <div id="pane-group" class="pane">
+    <div class="grid2">
+      <div class="card">
+        <span class="clabel">Food Menu</span>
+        <div class="stabs" id="stabs-gmenu"></div>
+        <div id="sp-gmenu-text" class="sp on"><textarea id="gmenu-text" placeholder="Paste the menu here..."></textarea></div>
+        <div id="sp-gmenu-photo" class="sp"><div class="dropzone"><input type="file" accept="image/*" onchange="onImg('gmenu',this)"><div class="dico">📷</div><p>Click or drag a photo</p></div><img id="thumb-gmenu" class="thumb"></div>
+        <div id="sp-gmenu-pdf" class="sp"><div class="dropzone"><input type="file" accept="application/pdf" onchange="onPdf('gmenu',this)"><div class="dico">📄</div><p>Click or drag a PDF</p></div><div id="badge-gmenu"></div></div>
+        <div id="sp-gmenu-url" class="sp"><input type="url" id="gmenu-url" placeholder="https://restaurant.com/menu"><p class="hint">Page will be fetched automatically</p></div>
+      </div>
+      <div class="card">
+        <span class="clabel">Wine List</span>
+        <div class="stabs" id="stabs-gwine"></div>
+        <div id="sp-gwine-text" class="sp on"><textarea id="gwine-text" placeholder="Paste the wine list here..."></textarea></div>
+        <div id="sp-gwine-photo" class="sp"><div class="dropzone"><input type="file" accept="image/*" onchange="onImg('gwine',this)"><div class="dico">📷</div><p>Click or drag a photo</p></div><img id="thumb-gwine" class="thumb"></div>
+        <div id="sp-gwine-pdf" class="sp"><div class="dropzone"><input type="file" accept="application/pdf" onchange="onPdf('gwine',this)"><div class="dico">📄</div><p>Click or drag a PDF</p></div><div id="badge-gwine"></div></div>
+        <div id="sp-gwine-url" class="sp"><input type="url" id="gwine-url" placeholder="https://restaurant.com/wine-list"><p class="hint">Page will be fetched automatically</p></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1rem">
+      <span class="clabel">Dishes Your Group Is Ordering</span>
+      <p class="hint" style="margin-bottom:12px">Extract dishes from the menu above, or type them in. Select up to 5.</p>
+      <button class="exBtn" id="exBtn" onclick="extractDishes()">✦ Extract dishes from menu</button>
+      <div id="dishGridWrap" style="display:none">
+        <p style="font-size:13px;font-family:'Jost',sans-serif;margin-bottom:8px;color:var(--ink2)">Select up to 5 dishes:</p>
+        <div class="dishGrid" id="dishGrid"></div>
+      </div>
+      <div class="manRow">
+        <input type="text" id="manDish" placeholder="Or type a dish name and press Add">
+        <button class="secBtn" onclick="addManual()">Add</button>
+      </div>
+      <div id="selWrap" style="display:none">
+        <p class="hint" style="margin-bottom:6px">Selected:</p>
+        <div class="pillRow" id="selList"></div>
+      </div>
+    </div>
+    <button class="bigBtn" id="btn-group" onclick="runGroup()">Find Best Wines for the Table</button>
+  </div>
+
+  <!-- SUGGEST -->
+  <div id="pane-suggest" class="pane">
+    <div class="card" style="margin-bottom:1rem">
+      <span class="clabel">Food Menu</span>
+      <p class="hint" style="margin-bottom:12px">No wine list needed — we'll suggest styles and what to ask for.</p>
+      <div class="stabs" id="stabs-smenu"></div>
+      <div id="sp-smenu-text" class="sp on"><textarea id="smenu-text" placeholder="Paste the full menu here..."></textarea></div>
+      <div id="sp-smenu-photo" class="sp"><div class="dropzone"><input type="file" accept="image/*" onchange="onImg('smenu',this)"><div class="dico">📷</div><p>Click or drag a photo</p></div><img id="thumb-smenu" class="thumb"></div>
+      <div id="sp-smenu-pdf" class="sp"><div class="dropzone"><input type="file" accept="application/pdf" onchange="onPdf('smenu',this)"><div class="dico">📄</div><p>Click or drag a PDF</p></div><div id="badge-smenu"></div></div>
+      <div id="sp-smenu-url" class="sp"><input type="url" id="smenu-url" placeholder="https://restaurant.com/menu"><p class="hint">Page will be fetched automatically</p></div>
+    </div>
+    <button class="bigBtn" id="btn-suggest" onclick="runSuggest()">Get Wine Suggestions</button>
+  </div>
+
+  <div id="results"></div>
+</div>
+
+<script>
+// ── State ──
+const S={};
+['imenu','iwine','gmenu','gwine','smenu'].forEach(k=>S[k]={mode:'text',img:null,imgType:null,pdf:null,pdfName:null});
+let picked=[],allDishes=[];
+
+// ── API Key ──
+function getKey(){return localStorage.getItem('sommelier_gemini_key')||'';}
+function saveKey(){
+  const v=document.getElementById('apiKeyInput').value.trim();
+  if(!v){updateKeyStatus('Please enter a valid key','no');return;}
+  localStorage.setItem('sommelier_gemini_key',v);
+  updateKeyStatus('✓ Key saved','ok');
+  document.getElementById('setupCard').style.display='none';
+}
+function updateKeyStatus(msg,cls){
+  const el=document.getElementById('keyStatus');
+  el.textContent=msg;el.className='key-status '+cls;
+}
+window.addEventListener('load',()=>{
+  const k=getKey();
+  if(k){
+    updateKeyStatus('✓ Key saved','ok');
+    document.getElementById('setupCard').style.display='none';
+    document.getElementById('apiKeyInput').value=k;
+  }
+});
+
+// ── Modes ──
+const modes=[{id:'individual',label:'Per Dish'},{id:'group',label:'Group Bottle'},{id:'suggest',label:'Suggestions'}];
+const modeRow=document.getElementById('modeRow');
+modes.forEach((m,i)=>{
+  const b=document.createElement('button');
+  b.className='mBtn'+(i===0?' on':'');
+  b.textContent=m.label;
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.mBtn').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('.pane').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    document.getElementById('pane-'+m.id).classList.add('on');
+    document.getElementById('results').innerHTML='';
+  });
+  modeRow.appendChild(b);
+});
+
+// ── Source tabs ──
+['imenu','iwine','gmenu','gwine','smenu'].forEach(side=>{
+  const c=document.getElementById('stabs-'+side);if(!c)return;
+  [['text','Text'],['photo','Photo'],['pdf','PDF'],['url','Link']].forEach(([k,l],i)=>{
+    const b=document.createElement('button');
+    b.className='sBtn'+(i===0?' on':'');
+    b.textContent=l;
+    b.addEventListener('click',()=>{
+      S[side].mode=k;
+      c.querySelectorAll('.sBtn').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      ['text','photo','pdf','url'].forEach(t=>{
+        const el=document.getElementById('sp-'+side+'-'+t);
+        if(el)el.classList.toggle('on',t===k);
+      });
+    });
+    c.appendChild(b);
+  });
+});
+
+// ── File handlers ──
+function onImg(side,input){
+  const file=input.files[0];if(!file)return;
+  S[side].imgType=file.type||'image/jpeg';
+  const r=new FileReader();
+  r.onload=e=>{
+    S[side].img=e.target.result.split(',')[1];
+    const t=document.getElementById('thumb-'+side);
+    if(t){t.src=e.target.result;t.style.display='block';}
+  };
+  r.readAsDataURL(file);
+}
+function onPdf(side,input){
+  const file=input.files[0];if(!file)return;
+  S[side].pdfName=file.name;
+  const r=new FileReader();
+  r.onload=e=>{
+    S[side].pdf=e.target.result.split(',')[1];
+    const b=document.getElementById('badge-'+side);
+    if(b)b.innerHTML=`<div class="fbadge">✓ ${file.name}</div>`;
+  };
+  r.readAsDataURL(file);
+}
+
+// ── Dish picker ──
+function addManual(){
+  const inp=document.getElementById('manDish');const v=inp.value.trim();
+  if(!v||picked.length>=5||picked.includes(v)){inp.value='';return;}
+  picked.push(v);if(!allDishes.includes(v)){allDishes.push(v);renderDishGrid();}
+  renderPills();inp.value='';
+}
+document.getElementById('manDish').addEventListener('keydown',e=>{if(e.key==='Enter')addManual();});
+function removeDish(i){picked.splice(i,1);renderDishGrid();renderPills();}
+function toggleDish(dish){
+  if(picked.includes(dish)){picked=picked.filter(d=>d!==dish);}
+  else{if(picked.length>=5)return;picked.push(dish);}
+  renderDishGrid();renderPills();
+}
+function renderDishGrid(){
+  const g=document.getElementById('dishGrid');if(!g)return;
+  g.innerHTML='';
+  allDishes.forEach(d=>{
+    const el=document.createElement('div');
+    el.className='dchip'+(picked.includes(d)?' picked':(!picked.includes(d)&&picked.length>=5?' grey':''));
+    el.textContent=d;
+    el.addEventListener('click',()=>toggleDish(d));
+    g.appendChild(el);
+  });
+  document.getElementById('dishGridWrap').style.display='block';
+}
+function renderPills(){
+  const w=document.getElementById('selWrap'),l=document.getElementById('selList');
+  w.style.display=picked.length?'block':'none';
+  l.innerHTML=picked.map((d,i)=>`<span class="spill">${d}<button onclick="removeDish(${i})">×</button></span>`).join('');
+}
+
+// ── Helpers ──
+function setR(html){document.getElementById('results').innerHTML=html;}
+function showErr(msg){setR(`<div class="err">${msg}</div>`);}
+function loading(msg){setR(`<div class="loading"><div class="spin"></div><div class="loading-text">${msg||'Consulting the sommelier...'}</div></div>`);}
+
+async function fetchUrl(url){
+  const res=await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+  if(!res.ok)throw new Error(`Could not fetch page (${res.status})`);
+  const data=await res.json();
+  if(!data.contents)throw new Error('Page returned empty content');
+  return data.contents
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi,'')
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi,'')
+    .replace(/<[^>]+>/g,' ')
+    .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ')
+    .replace(/\s{2,}/g,' ').trim().slice(0,10000);
+}
+
+async function getContent(side){
+  const label=side.includes('menu')||side==='smenu'?'food menu':'wine list';
+  const m=S[side].mode;
+  if(m==='text'){
+    const el=document.getElementById(side+'-text');
+    const v=el?el.value.trim():'';
+    if(!v)throw new Error(`Please enter the ${label}.`);
+    return{type:'text',value:v};
+  }
+  if(m==='photo'){
+    if(!S[side].img)throw new Error(`Please upload a photo for the ${label}.`);
+    return{type:'image',value:S[side].img,mimeType:S[side].imgType||'image/jpeg'};
+  }
+  if(m==='pdf'){
+    if(!S[side].pdf)throw new Error(`Please upload a PDF for the ${label}.`);
+    return{type:'pdf',value:S[side].pdf};
+  }
+  if(m==='url'){
+    const el=document.getElementById(side+'-url');
+    const url=el?el.value.trim():'';
+    if(!url)throw new Error(`Please enter a URL for the ${label}.`);
+    loading('Fetching '+label+'...');
+    const text=await fetchUrl(url);
+    return{type:'text',value:text};
+  }
+}
+
+function buildGeminiParts(contents){
+  // contents is array of {type,value,mimeType}
+  const parts=[];
+  contents.forEach(c=>{
+    if(c.type==='text')parts.push({text:c.value});
+    else if(c.type==='image')parts.push({inlineData:{mimeType:c.mimeType,data:c.value}});
+    else if(c.type==='pdf')parts.push({inlineData:{mimeType:'application/pdf',data:c.value}});
+  });
+  return parts;
+}
+
+async function gemini(systemPrompt,contentParts){
+  const key=getKey();
+  if(!key)throw new Error('Please enter your Gemini API key at the top of the page.');
+  const parts=[{text:systemPrompt},...buildGeminiParts(contentParts)];
+  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${key}`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      contents:[{parts}],
+      generationConfig:{temperature:0.4,maxOutputTokens:4096}
+    })
+  });
+  if(!res.ok){const t=await res.text();throw new Error(`API error (${res.status}): ${t.slice(0,200)}`);}
+  const d=await res.json();
+  if(d.error)throw new Error(d.error.message);
+  return d.candidates?.[0]?.content?.parts?.[0]?.text||'';
+}
+
+function parseArr(raw){
+  const m=raw.match(/\[[\s\S]*\]/);if(!m)throw new Error('No JSON array in response');
+  return JSON.parse(m[0]);
+}
+function parseObj(raw){
+  const m=raw.match(/\{[\s\S]*\}/);if(!m)throw new Error('No JSON object in response');
+  return JSON.parse(m[0]);
+}
+
+// badge styles
+const TC={
+  'Red':`background:var(--red-bg);color:var(--red-text)`,
+  'White':`background:var(--blue-bg);color:var(--blue-text)`,
+  'Rosé':`background:var(--amber-bg);color:var(--amber-text)`,
+  'Sparkling':`background:var(--green-bg);color:var(--green-text)`,
+  'Dessert':`background:var(--amber-bg);color:var(--amber-text)`,
+  'Fortified':`background:var(--red-bg);color:var(--red-text)`,
+  'Orange':`background:var(--amber-bg);color:var(--amber-text)`
+};
+
+// ── Per dish ──
+async function runIndividual(){
+  const btn=document.getElementById('btn-individual');
+  btn.disabled=true;btn.textContent='Working...';
+  loading('Preparing your selection...');
+  let mc,wc;
+  try{mc=await getContent('imenu');wc=await getContent('iwine');}
+  catch(e){showErr(e.message);btn.disabled=false;btn.textContent='Get Pairings';return;}
+  loading('Consulting the sommelier...');
+  try{
+    const raw=await gemini(
+      `You are a world-class Italian sommelier. Given a food menu and wine list, pair the best wine from the list to each dish.
+Return ONLY a valid JSON array, no markdown fences, no preamble.
+Each object must have exactly:
+- "dish": string (dish name)
+- "wine": string (exact wine name from the list)
+- "type": one of "Red","White","Rosé","Sparkling","Dessert","Fortified","Orange"
+- "price": string (price from the list, e.g. "$52")
+- "rationale": string (2-3 sentences explaining the pairing)
+- "tags": array of 3-5 short tasting/pairing note strings
+- "alternatives": array of 1-2 alternative wine names from the list
+
+Here is the food menu:`,
+      [mc,{type:'text',value:'Here is the wine list:'},wc,{type:'text',value:'Return only the JSON array.'}]
+    );
+    const arr=parseArr(raw);
+    let html='<div class="divider">Pairings</div>';
+    arr.forEach(p=>{
+      const style=TC[p.type]||TC['White'];
+      const tags=(p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
+      const alts=(p.alternatives||[]).length?`<div class="alts"><b>Also works:</b> ${p.alternatives.join(', ')}</div>`:'';
+      html+=`<div class="pcard">
+        <div class="dname">${p.dish}</div>
+        <div class="wrow"><span class="wname">${p.wine}</span>${p.price?`<span class="wprice">${p.price}</span>`:''}<span class="wbadge" style="${style}">${p.type}</span></div>
+        <div class="tags">${tags}</div>
+        <div class="rat">${p.rationale}${alts}</div>
+      </div>`;
+    });
+    setR(html);
+  }catch(e){showErr('Error: '+e.message);}
+  btn.disabled=false;btn.textContent='Get Pairings';
+}
+
+// ── Extract dishes — parsed from menu text client-side, no API call ──
+async function extractDishes(){
+  const btn=document.getElementById('exBtn');
+  btn.disabled=true;btn.textContent='Extracting...';
+  let mc;
+  try{mc=await getContent('gmenu');}
+  catch(e){showErr(e.message);btn.disabled=false;btn.textContent='✦ Extract dishes from menu';return;}
+  setR('');
+  try{
+    // Try to extract dish names without an API call first
+    // by parsing text content for lines that look like dish names
+    if(mc.type==='text'){
+      const lines=mc.value.split('\n').map(l=>l.trim()).filter(l=>l.length>2&&l.length<80);
+      // Filter out prices, section headers, URLs, and short words
+      const dishes=lines.filter(l=>{
+        if(/^\$[\d]/.test(l))return false;
+        if(/^(half|full|\d+|\*+|#{1,3}|https?:)/i.test(l))return false;
+        if(/price|menu|restaurant|download|reservation/i.test(l))return false;
+        if(l.split(' ').length<2)return false;
+        return true;
+      }).slice(0,50);
+      if(dishes.length>3){
+        allDishes=dishes;
+        renderDishGrid();
+        btn.disabled=false;btn.textContent='✦ Extract dishes from menu';
+        return;
+      }
+    }
+    // Fallback to API if parsing didn't work well enough
+    await sleep(1000);
+    const raw=await gemini(
+      'Extract all dish names from this menu. Return ONLY a JSON array of strings — dish names only, no descriptions, no prices, no extras. Example: ["Rigatoni e Burrata","Branzino","Tagliata di Manzo"]\n\nMenu:',
+      [mc,{type:'text',value:'Return only the JSON array of dish name strings.'}]
+    );
+    allDishes=parseArr(raw).slice(0,50);
+    renderDishGrid();
+  }catch(e){showErr('Could not extract dishes: '+e.message);}
+  btn.disabled=false;btn.textContent='✦ Extract dishes from menu';
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ── Group bottle ──
+async function runGroup(){
+  if(!picked.length){showErr('Please select at least one dish your group is ordering.');return;}
+  const btn=document.getElementById('btn-group');
+  btn.disabled=true;btn.textContent='Working...';
+  loading('Finding the perfect bottle for your table...');
+  let mc,wc;
+  try{mc=await getContent('gmenu');wc=await getContent('gwine');}
+  catch(e){showErr(e.message);btn.disabled=false;btn.textContent='Find Best Wines for the Table';return;}
+  try{
+    const raw=await gemini(
+      `You are a world-class sommelier helping a group pick ONE bottle that works across multiple dishes.
+Return ONLY a valid JSON array, no markdown, no preamble. Return 5-10 wines from the list ranked best-first.
+Each object must have:
+- "wine": string (exact name from list)
+- "type": one of "Red","White","Rosé","Sparkling","Fortified"
+- "price": string (price from list)
+- "score": integer 1-100 (how well it bridges all dishes)
+- "sommelier_note": string (2-3 sentences on why this works as a group wine)
+- "dish_coverage": array of objects, one per ordered dish: {"dish":string,"fit":"excellent"|"good"|"passable","note":"one sentence"}
+
+The group is ordering: ${picked.join(', ')}.
+
+Food menu:`,
+      [mc,{type:'text',value:'Wine list:'},wc,{type:'text',value:'Return only the JSON array ranked best-first.'}]
+    );
+    const arr=parseArr(raw);
+    const fd={excellent:'dg',good:'dok',passable:'dw'};
+    let html=`<div class="ordbar">Your table is ordering: <b>${picked.join(' &nbsp;·&nbsp; ')}</b></div>`;
+    html+=`<div class="divider">Best Wines for the Table</div>`;
+    arr.forEach((w,i)=>{
+      const style=TC[w.type]||TC['White'];
+      const pct=Math.min(100,Math.max(0,w.score||0));
+      const cov=(w.dish_coverage||[]).map(d=>`<div class="crow"><div class="${fd[d.fit]||'dok'}"></div><div><strong>${d.dish}</strong> — ${d.note}</div></div>`).join('');
+      html+=`<div class="gcard">
+        <div class="ghead"><span class="gnum">${i+1}</span><span class="gwname">${w.wine}</span><span class="wbadge" style="${style};margin-left:2px">${w.type}</span>${w.price?`<span class="wprice" style="color:var(--gold);font-size:12px;font-family:'Jost',sans-serif">${w.price}</span>`:''}</div>
+        <div class="sbar"><div class="sbl"><span>Table compatibility</span><span>${pct}/100</span></div><div class="sbg"><div class="sbf" style="width:${pct}%"></div></div></div>
+        ${cov?`<div class="covWrap"><div class="covLabel">How it pairs with each dish</div>${cov}</div>`:''}
+        <div class="snote">${w.sommelier_note||''}</div>
+      </div>`;
+    });
+    html+=`<div class="leg"><span><span class="legdot" style="background:#2d9e58"></span>Excellent</span><span><span class="legdot" style="background:#c98a1a"></span>Good</span><span><span class="legdot" style="background:#b83232"></span>Passable</span></div>`;
+    setR(html);
+  }catch(e){showErr('Error: '+e.message);}
+  btn.disabled=false;btn.textContent='Find Best Wines for the Table';
+}
+
+// ── Suggestions ──
+async function runSuggest(){
+  const btn=document.getElementById('btn-suggest');
+  btn.disabled=true;btn.textContent='Working...';
+  loading('Reading the menu...');
+  let mc;
+  try{mc=await getContent('smenu');}
+  catch(e){showErr(e.message);btn.disabled=false;btn.textContent='Get Wine Suggestions';return;}
+  loading('Crafting your suggestions...');
+  try{
+    const raw=await gemini(
+      `You are a world-class sommelier. Given only a food menu (no wine list), recommend wine styles a diner should look for or ask about.
+Return ONLY a valid JSON object, no markdown, no preamble:
+{
+  "menu_summary": "2-3 sentence poetic description of the menu character and what it calls for",
+  "suggestions": [
+    {
+      "type": "Red"|"White"|"Rosé"|"Sparkling"|"Dessert"|"Orange",
+      "style": "e.g. Aged Barolo",
+      "region": "e.g. Piedmont, Italy",
+      "grape": "e.g. Nebbiolo",
+      "why": "2 sentences on why this style fits the menu",
+      "best_for": ["dish name 1","dish name 2"],
+      "flavor_profile": ["note1","note2","note3","note4"],
+      "price_tier": "budget"|"mid-range"|"premium"|"splurge",
+      "ask_sommelier": "one natural sentence to say to the sommelier when ordering"
+    }
+  ]
+}
+
+Return 6-10 suggestions. Here is the food menu:`,
+      [mc,{type:'text',value:'Return only the JSON object.'}]
+    );
+    const obj=parseObj(raw);
+    const PT={'budget':TC['Sparkling'],'mid-range':TC['White'],'premium':TC['Rosé'],'splurge':TC['Red']};
+    const PL={'budget':'Budget','mid-range':'Mid-range','premium':'Premium','splurge':'Splurge'};
+    let html='';
+    if(obj.menu_summary)html+=`<div class="msum">${obj.menu_summary}</div>`;
+    html+=`<div class="divider">Wine Styles to Look For</div>`;
+    (obj.suggestions||[]).forEach(s=>{
+      const ts=TC[s.type]||TC['White'];
+      const ps=PT[s.price_tier]||TC['White'];
+      html+=`<div class="scard">
+        <div class="sname">${s.style}</div>
+        <div class="smeta">
+          <span class="wbadge" style="${ts}">${s.type}</span>
+          <span>${s.grape}</span>
+          <span style="color:var(--ink3)">·</span>
+          <span style="color:var(--ink3)">${s.region}</span>
+          <span class="wbadge" style="${ps}">${PL[s.price_tier]||s.price_tier}</span>
+        </div>
+        <div class="sprof">${(s.flavor_profile||[]).map(f=>`<span class="ppill">${f}</span>`).join('')}</div>
+        <div class="swhy">${s.why}</div>
+        ${(s.best_for||[]).length?`<div style="margin-top:9px"><span class="hint">Best with: </span>${s.best_for.map(d=>`<span class="tag">${d}</span>`).join('')}</div>`:''}
+        ${s.ask_sommelier?`<div class="askbox"><b>Ask the sommelier:</b> "${s.ask_sommelier}"</div>`:''}
+      </div>`;
+    });
+    setR(html);
+  }catch(e){showErr('Error: '+e.message);}
+  btn.disabled=false;btn.textContent='Get Wine Suggestions';
+}
+</script>
+</body>
+</html>
