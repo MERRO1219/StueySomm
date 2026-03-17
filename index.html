@@ -232,6 +232,23 @@ input[type=url]:focus,input[type=text]:focus{outline:none;border-color:var(--win
         <div id="sp-iwine-url" class="sp"><input type="url" id="iwine-url" placeholder="https://restaurant.com/wine-list"><p class="hint">Page will be fetched automatically</p></div>
       </div>
     </div>
+    <div class="card" style="margin-top:1rem">
+      <span class="clabel">Wine Filters</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div>
+          <label style="font-size:12px;color:var(--ink3);display:block;margin-bottom:5px">Min price ($)</label>
+          <input type="number" id="ipriceMin" placeholder="e.g. 40" min="0" style="width:100%;padding:9px 12px;font-size:13px;font-family:'Jost',sans-serif;border:1px solid var(--border);border-radius:8px;background:var(--paper);color:var(--ink);">
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--ink3);display:block;margin-bottom:5px">Max price ($)</label>
+          <input type="number" id="ipriceMax" placeholder="e.g. 120" min="0" style="width:100%;padding:9px 12px;font-size:13px;font-family:'Jost',sans-serif;border:1px solid var(--border);border-radius:8px;background:var(--paper);color:var(--ink);">
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--ink2);font-family:'Jost',sans-serif;">
+        <input type="checkbox" id="ibyGlassOnly" style="width:16px;height:16px;accent-color:var(--wine);cursor:pointer;">
+        Only show wines available by the glass
+      </label>
+    </div>
     <button class="bigBtn" id="btn-individual" onclick="runIndividual()">Get Pairings</button>
   </div>
 
@@ -257,10 +274,10 @@ input[type=url]:focus,input[type=text]:focus{outline:none;border-color:var(--win
     </div>
     <div class="card" style="margin-top:1rem">
       <span class="clabel">Dishes Your Group Is Ordering</span>
-      <p class="hint" style="margin-bottom:12px">Extract dishes from the menu above, or type them in. Select up to 5.</p>
+      <p class="hint" style="margin-bottom:12px">Extract dishes from the menu above, or type them in. Select up to 8.</p>
       <button class="exBtn" id="exBtn" onclick="extractDishes()">✦ Extract dishes from menu</button>
       <div id="dishGridWrap" style="display:none">
-        <p style="font-size:13px;font-family:'Jost',sans-serif;margin-bottom:8px;color:var(--ink2)">Select up to 5 dishes:</p>
+        <p style="font-size:13px;font-family:'Jost',sans-serif;margin-bottom:8px;color:var(--ink2)">Select up to 8 dishes:</p>
         <div class="dishGrid" id="dishGrid"></div>
       </div>
       <div class="manRow">
@@ -271,6 +288,23 @@ input[type=url]:focus,input[type=text]:focus{outline:none;border-color:var(--win
         <p class="hint" style="margin-bottom:6px">Selected:</p>
         <div class="pillRow" id="selList"></div>
       </div>
+    </div>
+    <div class="card" style="margin-top:1rem">
+      <span class="clabel">Wine Filters</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div>
+          <label style="font-size:12px;color:var(--ink3);display:block;margin-bottom:5px">Min price ($)</label>
+          <input type="number" id="priceMin" placeholder="e.g. 40" min="0" style="width:100%;padding:9px 12px;font-size:13px;font-family:'Jost',sans-serif;border:1px solid var(--border);border-radius:8px;background:var(--paper);color:var(--ink);">
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--ink3);display:block;margin-bottom:5px">Max price ($)</label>
+          <input type="number" id="priceMax" placeholder="e.g. 120" min="0" style="width:100%;padding:9px 12px;font-size:13px;font-family:'Jost',sans-serif;border:1px solid var(--border);border-radius:8px;background:var(--paper);color:var(--ink);">
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--ink2);font-family:'Jost',sans-serif;">
+        <input type="checkbox" id="byGlassOnly" style="width:16px;height:16px;accent-color:var(--wine);cursor:pointer;">
+        Only show wines available by the glass
+      </label>
     </div>
     <button class="bigBtn" id="btn-group" onclick="runGroup()">Find Best Wines for the Table</button>
   </div>
@@ -384,24 +418,25 @@ function onPdf(side,input){
 // ── Dish picker ──
 function addManual(){
   const inp=document.getElementById('manDish');const v=inp.value.trim();
-  if(!v||picked.length>=5||picked.includes(v)){inp.value='';return;}
-  picked.push(v);if(!allDishes.includes(v)){allDishes.push(v);renderDishGrid();}
+  if(!v||picked.length>=8||picked.find(d=>d.name===v)){inp.value='';return;}
+  const nd={name:v,desc:''};picked.push(nd);if(!allDishes.find(d=>d.name===v)){allDishes.push(nd);renderDishGrid();}
   renderPills();inp.value='';
 }
 document.getElementById('manDish').addEventListener('keydown',e=>{if(e.key==='Enter')addManual();});
 function removeDish(i){picked.splice(i,1);renderDishGrid();renderPills();}
 function toggleDish(dish){
-  if(picked.includes(dish)){picked=picked.filter(d=>d!==dish);}
-  else{if(picked.length>=5)return;picked.push(dish);}
+  if(picked.find(d=>d.name===dish.name)){picked=picked.filter(d=>d.name!==dish.name);}
+  else{if(picked.length>=8)return;picked.push(dish);}
   renderDishGrid();renderPills();
 }
 function renderDishGrid(){
   const g=document.getElementById('dishGrid');if(!g)return;
   g.innerHTML='';
   allDishes.forEach(d=>{
+    const isPicked=picked.find(p=>p.name===d.name);
     const el=document.createElement('div');
-    el.className='dchip'+(picked.includes(d)?' picked':(!picked.includes(d)&&picked.length>=5?' grey':''));
-    el.textContent=d;
+    el.className='dchip'+(isPicked?' picked':(!isPicked&&picked.length>=8?' grey':''));
+    el.innerHTML=`<div style="font-weight:500">${d.name}</div>${d.desc?`<div style="font-size:11px;opacity:.7;margin-top:2px;line-height:1.3">${d.desc}</div>`:''}`;
     el.addEventListener('click',()=>toggleDish(d));
     g.appendChild(el);
   });
@@ -410,7 +445,7 @@ function renderDishGrid(){
 function renderPills(){
   const w=document.getElementById('selWrap'),l=document.getElementById('selList');
   w.style.display=picked.length?'block':'none';
-  l.innerHTML=picked.map((d,i)=>`<span class="spill">${d}<button onclick="removeDish(${i})">×</button></span>`).join('');
+  l.innerHTML=picked.map((d,i)=>`<span class="spill">${d.name}<button onclick="removeDish(${i})">×</button></span>`).join('');
 }
 
 // ── Helpers ──
@@ -531,11 +566,17 @@ async function runIndividual(){
   let mc,wc;
   try{mc=await getContent('imenu');wc=await getContent('iwine');}
   catch(e){showErr(e.message);btn.disabled=false;btn.textContent='Get Pairings';return;}
+  const ipMin=document.getElementById('ipriceMin').value;
+  const ipMax=document.getElementById('ipriceMax').value;
+  const ibyGlass=document.getElementById('ibyGlassOnly').checked;
+  const iPriceFilter=ipMin||ipMax?`Only suggest wines priced ${ipMin?'above $'+ipMin:''}${ipMin&&ipMax?' and ':''}${ipMax?'below $'+ipMax:''}.`:'';
+  const iGlassFilter=ibyGlass?'Only suggest wines that are available by the glass.':'';
   loading('Consulting the sommelier...');
   try{
     const raw=await gemini(
       `You are a world-class Italian sommelier. Given a food menu and wine list, pair the best wine from the list to each dish.
 Return ONLY a valid JSON array, no markdown fences, no preamble.
+${iPriceFilter} ${iGlassFilter}
 Each object must have exactly:
 - "dish": string (dish name)
 - "wine": string (exact wine name from the list)
@@ -588,7 +629,7 @@ async function extractDishes(){
         return true;
       }).slice(0,50);
       if(dishes.length>3){
-        allDishes=dishes;
+        allDishes=dishes.map(d=>({name:d,desc:''}));
         renderDishGrid();
         btn.disabled=false;btn.textContent='✦ Extract dishes from menu';
         return;
@@ -597,10 +638,11 @@ async function extractDishes(){
     // Fallback to API if parsing didn't work well enough
     await sleep(1000);
     const raw=await gemini(
-      'Extract all dish names from this menu. Return ONLY a JSON array of strings — dish names only, no descriptions, no prices, no extras. Example: ["Rigatoni e Burrata","Branzino","Tagliata di Manzo"]\n\nMenu:',
+      'Extract all dishes from this menu. Return ONLY a JSON array of objects with "name" (dish name) and "desc" (short description or ingredients, empty string if none). Example: [{"name":"Rigatoni e Burrata","desc":"Three minute pomodoro fresca, local burrata, basil"},{"name":"Branzino","desc":"Mediterranean sea bass, cavolo nero, hazelnuts"}]\n\nMenu:',
       [mc,{type:'text',value:'Return only the JSON array of dish name strings.'}]
     );
-    allDishes=parseArr(raw).slice(0,50);
+    const parsed=parseArr(raw).slice(0,60);
+    allDishes=parsed.map(d=>typeof d==='string'?{name:d,desc:''}:d);
     renderDishGrid();
   }catch(e){showErr('Could not extract dishes: '+e.message);}
   btn.disabled=false;btn.textContent='✦ Extract dishes from menu';
@@ -614,6 +656,11 @@ async function runGroup(){
   const btn=document.getElementById('btn-group');
   btn.disabled=true;btn.textContent='Working...';
   loading('Finding the perfect bottle for your table...');
+  const pMin=document.getElementById('priceMin').value;
+  const pMax=document.getElementById('priceMax').value;
+  const byGlass=document.getElementById('byGlassOnly').checked;
+  const priceFilter=pMin||pMax?`Only suggest wines priced ${pMin?'above $'+pMin:''}${pMin&&pMax?' and ':''}${pMax?'below $'+pMax:''}.\n`:'';
+  const glassFilter=byGlass?'Only suggest wines that are available by the glass.\n':'';
   let mc,wc;
   try{mc=await getContent('gmenu');wc=await getContent('gwine');}
   catch(e){showErr(e.message);btn.disabled=false;btn.textContent='Find Best Wines for the Table';return;}
@@ -629,7 +676,8 @@ Each object must have:
 - "sommelier_note": string (2-3 sentences on why this works as a group wine)
 - "dish_coverage": array of objects, one per ordered dish: {"dish":string,"fit":"excellent"|"good"|"passable","note":"one sentence"}
 
-The group is ordering: ${picked.join(', ')}.
+The group is ordering: ${picked.map(d=>d.desc?d.name+' ('+d.desc+')':d.name).join(', ')}.
+${priceFilter}${glassFilter}
 
 Food menu:`,
       [mc,{type:'text',value:'Wine list:'},wc,{type:'text',value:'Return only the JSON array ranked best-first.'}]
