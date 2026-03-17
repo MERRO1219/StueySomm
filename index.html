@@ -367,8 +367,27 @@ Example: [{"name":"Linguine Vongole","desc":"briny clams, peperoncino, lemon"},{
     );
     let parsed;
     const cleaned=raw.replace(/```json/g,'').replace(/```/g,'').trim();
-    try{ parsed=JSON.parse(cleaned.startsWith('[')?cleaned:cleaned.substring(cleaned.indexOf('['))); }
-    catch(e){ const m=cleaned.match(/\[[\s\S]*\]/); if(!m)throw new Error('No dish list found in response'); parsed=JSON.parse(m[0]); }
+    // Robust JSON cleaner — fixes common LLM JSON issues
+    function cleanJSON(str){
+      const start=str.indexOf('[');
+      const end=str.lastIndexOf(']');
+      if(start===-1||end===-1)throw new Error('No JSON array found');
+      let s=str.substring(start,end+1);
+      // Fix unescaped quotes inside string values
+      s=s.replace(/"desc":\s*"([^"]*)"/g,(m,v)=>'"desc":"'+v.replace(/"/g,'\\"')+'"');
+      // Fix trailing commas before ] or }
+      s=s.replace(/,\s*([\]\}])/g,'$1');
+      return s;
+    }
+    try{
+      const s=cleanJSON(cleaned);
+      parsed=JSON.parse(s);
+    }catch(e){
+      // Last resort — extract just name fields
+      const names=cleaned.match(/"name"\s*:\s*"([^"]+)"/g)||[];
+      if(!names.length)throw new Error('Could not parse dish list: '+e.message);
+      parsed=names.map(n=>{const m=n.match(/"name"\s*:\s*"([^"]+)"/);return{name:m?m[1]:'',desc:''};});
+    }
     allDishes=parsed.slice(0,60).map(d=>
       typeof d==='string'?{name:d,desc:''}:
       d&&d.name?{name:String(d.name),desc:String(d.desc||d.description||'')}:null
