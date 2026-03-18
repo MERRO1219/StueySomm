@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#f7f4ef">
-<title>Somm by Stu</title>
+<title>SimpleSomm by Stu</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -32,21 +32,9 @@ body{font-family:'Jost',sans-serif;background:var(--paper);color:var(--ink);min-
 .header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,8vw,64px);font-weight:300;letter-spacing:.03em;color:var(--ink);line-height:1;margin-bottom:.4rem;}
 .header h1 .by{color:var(--wine);}
 .tagline{font-size:13px;color:var(--ink3);letter-spacing:.05em;font-family:'Jost',sans-serif;}
-.tagline-ai{font-weight:700;font-style:italic;color:var(--wine);}
+.tagline-ai{font-weight:700;font-style:normal;color:var(--wine);}
 
-/* ── Setup ── */
-.setup{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem;margin-bottom:1.5rem;position:relative;overflow:hidden;}
-.setup::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--wine),var(--gold));}
-.setup h2{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;margin-bottom:5px;}
-.setup p{font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:12px;}
-.setup a{color:var(--wine);}
-.key-row{display:flex;gap:8px;}
-.key-row input{flex:1;padding:12px;font-size:14px;font-family:'Jost',sans-serif;border:1px solid var(--border2);border-radius:10px;background:var(--paper);color:var(--ink);min-height:var(--touch);}
-.key-row input:focus{outline:none;border-color:var(--wine);}
-.save-btn{padding:12px 20px;background:var(--wine);color:#fff;border:none;border-radius:10px;font-size:14px;font-family:'Jost',sans-serif;cursor:pointer;min-height:var(--touch);white-space:nowrap;}
-.key-status{font-size:12px;margin-top:6px;}
-.key-status.ok{color:var(--green-text);}
-.key-status.no{color:var(--red-text);}
+
 
 /* ── Section label ── */
 .slabel{font-size:10px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:.15em;display:block;margin-bottom:10px;}
@@ -181,20 +169,11 @@ input[type=url]:focus,input[type=text]:focus,input[type=number]:focus{outline:no
 
   <!-- Header -->
   <div class="header">
-    <h1>SOMM <span class="by">by Stu</span></h1>
+    <h1>Simple<span class="by">Somm</span> <span style="font-size:clamp(20px,3vw,28px);font-weight:300;color:var(--ink3)">by Stu</span></h1>
     <p class="tagline">a wine p<span class="tagline-ai">ai</span>ring app</p>
   </div>
 
-  <!-- API Key Setup -->
-  <div class="setup" id="setupCard">
-    <h2>One-time setup</h2>
-    <p>Enter your Anthropic API key — saved only in your browser. Get one free at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys.</p>
-    <div class="key-row">
-      <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
-      <button class="save-btn" onclick="saveKey()">Save</button>
-    </div>
-    <div class="key-status no" id="keyStatus">No key saved yet</div>
-  </div>
+
 
   <!-- Menu & Wine inputs -->
   <div class="grid2">
@@ -238,37 +217,15 @@ let courses = [];
 let courseCounter = 0;
 let cachedMenuContent = null; // cache menu so second/third course extractions don't re-fetch
 
-// ─────────────────────────────────────────
-// API Key
-// ─────────────────────────────────────────
-function getKey() { return localStorage.getItem('somm_stu_v3') || ''; }
-function saveKey() {
-  const v = document.getElementById('apiKeyInput').value.trim();
-  if (!v) { setKeyStatus('Please enter a valid key', 'no'); return; }
-  localStorage.setItem('somm_stu_v3', v);
-  setKeyStatus('✓ Key saved', 'ok');
-  document.getElementById('setupCard').style.display = 'none';
-}
-function setKeyStatus(msg, cls) {
-  const el = document.getElementById('keyStatus');
-  el.textContent = msg;
-  el.className = 'key-status ' + cls;
-}
+
 
 // ─────────────────────────────────────────
 // Init
 // ─────────────────────────────────────────
 window.addEventListener('load', () => {
-  const k = getKey();
-  if (k) {
-    setKeyStatus('✓ Key saved', 'ok');
-    document.getElementById('setupCard').style.display = 'none';
-    document.getElementById('apiKeyInput').value = k;
-  }
   buildSourceTabs('menu');
   buildSourceTabs('wine');
   addCourse();
-  // Clear menu cache when text input changes
   document.getElementById('menu-text')?.addEventListener('input', () => { cachedMenuContent = null; });
 });
 
@@ -394,25 +351,16 @@ function buildMsgs(parts) {
   });
 }
 async function callClaude(system, parts, schema) {
-  const key = getKey();
-  if (!key) throw new Error('Please enter your Anthropic API key at the top of the page.');
   const body = {
     model: 'claude-sonnet-4-5-20250929',
     max_tokens: 4096,
     system,
     messages: [{ role:'user', content:buildMsgs(parts) }]
   };
-  // Use structured outputs when a schema is provided — guarantees valid JSON
   if (schema) body.output_format = { type: 'json_schema', schema };
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('https://sommbystu.vercel.app/api/pair', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-      'anthropic-beta': 'structured-outputs-2025-11-13'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
   if (!res.ok) { const t = await res.text(); throw new Error(`API error (${res.status}): ${t.slice(0,200)}`); }
