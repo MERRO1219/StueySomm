@@ -691,28 +691,21 @@ async function runAllCourses() {
         const raw = await callClaude(
           `You are a world-class sommelier. For each dish, suggest the top 2 wines available by the glass from the wine list.
 ${typeFilter} ${priceFilter} ${glassFilter}
-Format your response EXACTLY like this, one dish per block:
-
-DISH: [dish name]
-WINE1: [exact wine name] | TYPE: [Red or White or Rosé or Sparkling or Dessert] | PRICE: [$XX] | NOTE: [1-2 sentences]
-WINE2: [exact wine name] | TYPE: [Red or White or Rosé or Sparkling or Dessert] | PRICE: [$XX] | NOTE: [1-2 sentences]
----
-
-Repeat for each dish. Food menu:`,
-          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}. Respond only in the exact format shown.`}]
+Respond with a JSON array. ONLY the JSON array, no explanation, no markdown backticks.
+Each object: {"dish":"dish name","pairings":[{"wine":"exact wine name","type":"Red or White or Rosé or Sparkling or Dessert","price":"$XX","note":"1-2 sentences"}]}
+Start your response with [`,
+          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}. Output ONLY the JSON array starting with [`}]
         );
-        // Parse structured text
-        const blocks = raw.split('---').map(b => b.trim()).filter(b => b.includes('DISH:'));
-        const arr = blocks.map(block => {
-          const dishM = block.match(/DISH:\s*(.+)/);
-          if (!dishM) return null;
-          const pairings = [];
-          ['WINE1','WINE2'].forEach(wk => {
-            const wM = block.match(new RegExp(wk + ':\s*([^|]+)\|\s*TYPE:\s*([^|]+)\|\s*PRICE:\s*([^|]+)\|\s*NOTE:\s*(.+)'));
-            if (wM) pairings.push({ wine:wM[1].trim(), type:wM[2].trim(), price:wM[3].trim(), note:wM[4].trim() });
-          });
-          return { dish: dishM[1].trim(), pairings };
-        }).filter(Boolean);
+        function robustParseArr2(str) {
+          let s = str.replace(/\`\`\`json/gi,'').replace(/\`\`\`/g,'').trim();
+          const start = s.indexOf('['); const end = s.lastIndexOf(']');
+          if (start === -1 || end === -1) throw new Error('No JSON array in response');
+          s = s.substring(start, end + 1);
+          s = s.replace(/,(\s*[\}\]])/g, '$1');
+          try { return JSON.parse(s); }
+          catch(e) { throw new Error('Could not parse response'); }
+        }
+        const arr = robustParseArr2(raw);
         if (!arr.length) throw new Error('No pairing results returned — please try again');
         html += `<div class="course-results"><div class="course-results-title">Course ${course.id} — By the Glass</div>`;
         arr.forEach(p => {
@@ -729,42 +722,36 @@ Repeat for each dish. Food menu:`,
         const raw = await callClaude(
           `You are a world-class sommelier helping choose the best bottle for a course of dishes.
 ${typeFilter} ${priceFilter}
-Suggest 3-6 wines from the wine list ranked best-first. Format your response EXACTLY like this, one wine per block, no extra text:
-
-WINE: [exact wine name from list]
-TYPE: [Red or White or Rosé or Sparkling or Dessert or Fortified]
-PRICE: [price from list]
-SCORE: [1-100]
-NOTE: [2-3 sentences on why this works for the course]
-${course.picked.map(d => `FIT_${d.name.replace(/[^a-zA-Z0-9]/g,'_')}: [excellent or good or passable] | [one sentence on how it pairs with ${d.name}]`).join('\n')}
----
-
-Repeat this block for each wine. Food menu:`,
-          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}. Respond only with the wine blocks in the exact format shown.`}]
+Respond with a JSON array of 3-6 wines from the list ranked best-first.
+IMPORTANT: Your response must be ONLY the JSON array. No explanation before or after. No markdown backticks.
+The array must start with [ and end with ].
+Each object needs: wine (string), type (Red/White/Rosé/Sparkling/Dessert/Fortified), price (string like $52), score (number 1-100), sommelier_note (string), dish_coverage (array of objects with dish, fit (excellent/good/passable), note).
+Food menu:`,
+          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}. Output ONLY the JSON array starting with [`}]
         );
-        // Parse the structured text format
-        const blocks = raw.split('---').map(b => b.trim()).filter(b => b.includes('WINE:'));
-        const arr = blocks.map(block => {
-          const wineM = block.match(/WINE:\s*(.+)/);
-          const typeM = block.match(/TYPE:\s*(.+)/);
-          const priceM = block.match(/PRICE:\s*(.+)/);
-          const scoreM = block.match(/SCORE:\s*(\d+)/);
-          const noteM = block.match(/NOTE:\s*(.+)/);
-          if (!wineM) return null;
-          const dish_coverage = course.picked.map(d => {
-            const key = d.name.replace(/[^a-zA-Z0-9]/g,'_');
-            const fitM = block.match(new RegExp('FIT_' + key + ':\s*(excellent|good|passable)\s*\|\s*(.+)'));
-            return { dish: d.name, fit: fitM ? fitM[1] : 'good', note: fitM ? fitM[2].trim() : '' };
-          });
-          return {
-            wine: wineM[1].trim(),
-            type: (typeM ? typeM[1].trim() : 'Red').replace(/[^a-zA-ZéèêëÉÈÊ &]/g,''),
-            price: priceM ? priceM[1].trim() : '',
-            score: scoreM ? parseInt(scoreM[1]) : 75,
-            sommelier_note: noteM ? noteM[1].trim() : '',
-            dish_coverage
-          };
-        }).filter(Boolean);
+        function robustParseArr(str) {
+          // Strip markdown fences
+          let s = str.replace(/\`\`\`json/gi,'').replace(/\`\`\`/g,'').trim();
+          // Find the outermost array
+          const start = s.indexOf('[');
+          const end = s.lastIndexOf(']');
+          if (start === -1 || end === -1) throw new Error('No JSON array in response');
+          s = s.substring(start, end + 1);
+          // Fix trailing commas before } or ]
+          s = s.replace(/,(\s*[\}\]])/g, '$1');
+          // Fix single quotes used instead of double quotes
+          s = s.replace(/'/g, '"');
+          try { return JSON.parse(s); }
+          catch(e) {
+            // Try to extract individual objects
+            const matches = s.match(/\{[^{}]*\}/g) || [];
+            if (matches.length) {
+              return matches.map(m => { try { return JSON.parse(m); } catch(e) { return null; } }).filter(Boolean);
+            }
+            throw new Error('Could not parse response: ' + e.message);
+          }
+        }
+        const arr = robustParseArr(raw);
         if (!arr.length) throw new Error('No pairing results returned — please try again');
         const fd = { excellent:'dg', good:'dok', passable:'dw' };
         html += `<div class="course-results"><div class="course-results-title">Course ${course.id}</div>`;
