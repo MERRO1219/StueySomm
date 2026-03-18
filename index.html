@@ -674,8 +674,9 @@ async function runAllCourses() {
         };
         const raw = await callClaude(
           `You are a world-class sommelier. For each dish, suggest the top 2 wines available by the glass from the wine list.
+CRITICAL RULE: You may ONLY suggest wines that appear VERBATIM on the wine list provided. Do NOT invent, guess, or suggest any wine not explicitly listed. Every wine name and price must be copied exactly as it appears on the wine list. Only suggest wines explicitly marked as available by the glass.
 ${typeFilter} ${priceFilter} ${glassFilter}
-For each dish provide the 2 best glass pairings with exact wine name, type, price, and a 1-2 sentence note explaining why it works.
+For each dish provide the 2 best glass pairings with exact wine name copied from the list, type, price as shown, and a 1-2 sentence note explaining why it works.
 Food menu:`,
           [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}.`}],
           glassSchema
@@ -741,9 +742,10 @@ Food menu:`,
         };
         const raw = await callClaude(
           `You are a world-class sommelier helping choose the best bottle for a course of dishes.
+CRITICAL RULE: You may ONLY suggest wines that appear VERBATIM on the wine list provided. Do NOT invent, guess, or suggest any wine not explicitly listed. If you are unsure whether a wine is on the list, do not include it. Every wine you suggest must be copied exactly from the wine list.
 ${typeFilter} ${priceFilter}
 Suggest 3-6 wines from the wine list ranked best-first by how well they work across all the dishes.
-For each wine include: exact name from the list, type, price, a compatibility score 1-100, a 2-3 sentence sommelier note, and a per-dish coverage assessment.
+For each wine include: exact name copied from the list, type, price as shown on the list, a compatibility score 1-100, a 2-3 sentence sommelier note, and a per-dish coverage assessment.
 Food menu:`,
           [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}.`}],
           bottleSchema
