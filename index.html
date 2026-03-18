@@ -364,13 +364,22 @@ async function fetchUrl(url) {
     () => fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`).then(r => r.text()),
     () => fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`).then(r => r.text())
   ];
+  // Words that indicate we got an error page rather than menu content
+  const errorSignals = ['api usage limits', 'rate limit', 'access denied', 'forbidden', '403', '404', 'not found', 'error occurred', 'something went wrong', 'cloudflare', 'please enable javascript', 'enable cookies'];
   for (const proxy of proxies) {
     try {
       const text = await Promise.race([proxy(), new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 8000))]);
-      if (text && text.length > 100) return cleanHtml(text);
+      if (!text || text.length < 200) continue;
+      const cleaned = cleanHtml(text);
+      const lower = cleaned.toLowerCase();
+      // Check if we got an error page instead of real content
+      const isError = errorSignals.some(sig => lower.includes(sig)) && cleaned.length < 1000;
+      if (isError) continue;
+      // Check it has food-like content (at least some words that look like a menu)
+      if (cleaned.length > 300) return cleaned;
     } catch(e) { continue; }
   }
-  throw new Error('Could not fetch that URL. Please switch to Text mode and paste the menu directly.');
+  throw new Error('Could not fetch that URL automatically. Please copy and paste the menu text directly into the Text tab instead.');
 }
 
 // ─────────────────────────────────────────
@@ -682,12 +691,29 @@ async function runAllCourses() {
         const raw = await callClaude(
           `You are a world-class sommelier. For each dish, suggest the top 2 wines available by the glass from the wine list.
 ${typeFilter} ${priceFilter} ${glassFilter}
-Return ONLY a valid JSON array, no markdown, no preamble.
-Each object: {"dish":"dish name","pairings":[{"wine":"exact wine name","type":"Red|White|Rosé|Sparkling|Dessert|Fortified","price":"$XX","note":"1-2 sentences why it works"}]}
-Food menu:`,
-          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}. Return only the JSON array.`}]
+Format your response EXACTLY like this, one dish per block:
+
+DISH: [dish name]
+WINE1: [exact wine name] | TYPE: [Red or White or Rosé or Sparkling or Dessert] | PRICE: [$XX] | NOTE: [1-2 sentences]
+WINE2: [exact wine name] | TYPE: [Red or White or Rosé or Sparkling or Dessert] | PRICE: [$XX] | NOTE: [1-2 sentences]
+---
+
+Repeat for each dish. Food menu:`,
+          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}. Respond only in the exact format shown.`}]
         );
-        const arr = safeParseArr(raw);
+        // Parse structured text
+        const blocks = raw.split('---').map(b => b.trim()).filter(b => b.includes('DISH:'));
+        const arr = blocks.map(block => {
+          const dishM = block.match(/DISH:\s*(.+)/);
+          if (!dishM) return null;
+          const pairings = [];
+          ['WINE1','WINE2'].forEach(wk => {
+            const wM = block.match(new RegExp(wk + ':\s*([^|]+)\|\s*TYPE:\s*([^|]+)\|\s*PRICE:\s*([^|]+)\|\s*NOTE:\s*(.+)'));
+            if (wM) pairings.push({ wine:wM[1].trim(), type:wM[2].trim(), price:wM[3].trim(), note:wM[4].trim() });
+          });
+          return { dish: dishM[1].trim(), pairings };
+        }).filter(Boolean);
+        if (!arr.length) throw new Error('No pairing results returned — please try again');
         html += `<div class="course-results"><div class="course-results-title">Course ${course.id} — By the Glass</div>`;
         arr.forEach(p => {
           html += `<div class="pcard"><div class="dname">${p.dish}</div>`;
@@ -703,12 +729,43 @@ Food menu:`,
         const raw = await callClaude(
           `You are a world-class sommelier helping choose the best bottle for a course of dishes.
 ${typeFilter} ${priceFilter}
-Return ONLY a valid JSON array of 3-6 wines from the list ranked best-first, no markdown.
-Each object: {"wine":"exact name from list","type":"Red|White|Rosé|Sparkling|Dessert|Fortified","price":"$XX","score":1-100,"sommelier_note":"2-3 sentences","dish_coverage":[{"dish":"dish name","fit":"excellent|good|passable","note":"one sentence"}]}
-Food menu:`,
-          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}. Return only the JSON array ranked best-first.`}]
+Suggest 3-6 wines from the wine list ranked best-first. Format your response EXACTLY like this, one wine per block, no extra text:
+
+WINE: [exact wine name from list]
+TYPE: [Red or White or Rosé or Sparkling or Dessert or Fortified]
+PRICE: [price from list]
+SCORE: [1-100]
+NOTE: [2-3 sentences on why this works for the course]
+${course.picked.map(d => `FIT_${d.name.replace(/[^a-zA-Z0-9]/g,'_')}: [excellent or good or passable] | [one sentence on how it pairs with ${d.name}]`).join('\n')}
+---
+
+Repeat this block for each wine. Food menu:`,
+          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}. Respond only with the wine blocks in the exact format shown.`}]
         );
-        const arr = safeParseArr(raw);
+        // Parse the structured text format
+        const blocks = raw.split('---').map(b => b.trim()).filter(b => b.includes('WINE:'));
+        const arr = blocks.map(block => {
+          const wineM = block.match(/WINE:\s*(.+)/);
+          const typeM = block.match(/TYPE:\s*(.+)/);
+          const priceM = block.match(/PRICE:\s*(.+)/);
+          const scoreM = block.match(/SCORE:\s*(\d+)/);
+          const noteM = block.match(/NOTE:\s*(.+)/);
+          if (!wineM) return null;
+          const dish_coverage = course.picked.map(d => {
+            const key = d.name.replace(/[^a-zA-Z0-9]/g,'_');
+            const fitM = block.match(new RegExp('FIT_' + key + ':\s*(excellent|good|passable)\s*\|\s*(.+)'));
+            return { dish: d.name, fit: fitM ? fitM[1] : 'good', note: fitM ? fitM[2].trim() : '' };
+          });
+          return {
+            wine: wineM[1].trim(),
+            type: (typeM ? typeM[1].trim() : 'Red').replace(/[^a-zA-ZéèêëÉÈÊ &]/g,''),
+            price: priceM ? priceM[1].trim() : '',
+            score: scoreM ? parseInt(scoreM[1]) : 75,
+            sommelier_note: noteM ? noteM[1].trim() : '',
+            dish_coverage
+          };
+        }).filter(Boolean);
+        if (!arr.length) throw new Error('No pairing results returned — please try again');
         const fd = { excellent:'dg', good:'dok', passable:'dw' };
         html += `<div class="course-results"><div class="course-results-title">Course ${course.id}</div>`;
         arr.forEach((w, i) => {
