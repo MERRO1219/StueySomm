@@ -393,23 +393,27 @@ function buildMsgs(parts) {
     return { type:'text', text:'' };
   });
 }
-async function callClaude(system, parts) {
+async function callClaude(system, parts, schema) {
   const key = getKey();
   if (!key) throw new Error('Please enter your Anthropic API key at the top of the page.');
+  const body = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 4096,
+    system,
+    messages: [{ role:'user', content:buildMsgs(parts) }]
+  };
+  // Use structured outputs when a schema is provided — guarantees valid JSON
+  if (schema) body.output_format = { type: 'json_schema', schema };
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': key,
       'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
+      'anthropic-dangerous-direct-browser-access': 'true',
+      'anthropic-beta': 'structured-outputs-2025-11-13'
     },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 4096,
-      system,
-      messages: [{ role:'user', content:buildMsgs(parts) }]
-    })
+    body: JSON.stringify(body)
   });
   if (!res.ok) { const t = await res.text(); throw new Error(`API error (${res.status}): ${t.slice(0,200)}`); }
   const d = await res.json();
@@ -688,24 +692,54 @@ async function runAllCourses() {
       const glassFilter = byGlass ? 'Only suggest wines available by the glass. Show the top 2 best by-the-glass options per dish.' : '';
 
       if (byGlass) {
+        const glassSchema = {
+          type: 'object',
+          properties: {
+            dishes: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  dish: { type: 'string' },
+                  pairings: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        wine: { type: 'string' },
+                        type: { type: 'string', enum: ['Red','White','Rosé','Sparkling','Dessert','Fortified'] },
+                        price: { type: 'string' },
+                        note: { type: 'string' }
+                      },
+                      required: ['wine','type','price','note']
+                    }
+                  }
+                },
+                required: ['dish','pairings']
+              }
+            }
+          },
+          required: ['dishes']
+        };
         const raw = await callClaude(
           `You are a world-class sommelier. For each dish, suggest the top 2 wines available by the glass from the wine list.
 ${typeFilter} ${priceFilter} ${glassFilter}
-Respond with a JSON array. ONLY the JSON array, no explanation, no markdown backticks.
-Each object: {"dish":"dish name","pairings":[{"wine":"exact wine name","type":"Red or White or Rosé or Sparkling or Dessert","price":"$XX","note":"1-2 sentences"}]}
-Start your response with [`,
-          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}. Output ONLY the JSON array starting with [`}]
+For each dish provide the 2 best glass pairings with exact wine name, type, price, and a 1-2 sentence note explaining why it works.
+Food menu:`,
+          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}.`}],
+          glassSchema
         );
-        function robustParseArr2(str) {
-          let s = str.replace(/\`\`\`json/gi,'').replace(/\`\`\`/g,'').trim();
+        let arr;
+        try {
+          const parsed = JSON.parse(raw);
+          arr = parsed.dishes || parsed;
+          if (!Array.isArray(arr)) arr = Object.values(parsed)[0] || [];
+        } catch(e) {
+          const s = raw.replace(/```json/g,'').replace(/```/g,'').trim();
           const start = s.indexOf('['); const end = s.lastIndexOf(']');
-          if (start === -1 || end === -1) throw new Error('No JSON array in response');
-          s = s.substring(start, end + 1);
-          s = s.replace(/,(\s*[\}\]])/g, '$1');
-          try { return JSON.parse(s); }
-          catch(e) { throw new Error('Could not parse response'); }
+          if (start === -1) throw new Error('No pairing results returned — please try again');
+          arr = JSON.parse(s.substring(start, end+1));
         }
-        const arr = robustParseArr2(raw);
         if (!arr.length) throw new Error('No pairing results returned — please try again');
         html += `<div class="course-results"><div class="course-results-title">Course ${course.id} — By the Glass</div>`;
         arr.forEach(p => {
@@ -719,39 +753,59 @@ Start your response with [`,
         });
         html += `</div>`;
       } else {
+        const bottleSchema = {
+          type: 'object',
+          properties: {
+            wines: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  wine: { type: 'string' },
+                  type: { type: 'string', enum: ['Red','White','Rosé','Sparkling','Dessert','Fortified'] },
+                  price: { type: 'string' },
+                  score: { type: 'number' },
+                  sommelier_note: { type: 'string' },
+                  dish_coverage: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        dish: { type: 'string' },
+                        fit: { type: 'string', enum: ['excellent','good','passable'] },
+                        note: { type: 'string' }
+                      },
+                      required: ['dish','fit','note']
+                    }
+                  }
+                },
+                required: ['wine','type','price','score','sommelier_note','dish_coverage']
+              }
+            }
+          },
+          required: ['wines']
+        };
         const raw = await callClaude(
           `You are a world-class sommelier helping choose the best bottle for a course of dishes.
 ${typeFilter} ${priceFilter}
-Respond with a JSON array of 3-6 wines from the list ranked best-first.
-IMPORTANT: Your response must be ONLY the JSON array. No explanation before or after. No markdown backticks.
-The array must start with [ and end with ].
-Each object needs: wine (string), type (Red/White/Rosé/Sparkling/Dessert/Fortified), price (string like $52), score (number 1-100), sommelier_note (string), dish_coverage (array of objects with dish, fit (excellent/good/passable), note).
+Suggest 3-6 wines from the wine list ranked best-first by how well they work across all the dishes.
+For each wine include: exact name from the list, type, price, a compatibility score 1-100, a 2-3 sentence sommelier note, and a per-dish coverage assessment.
 Food menu:`,
-          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}. Output ONLY the JSON array starting with [`}]
+          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}.`}],
+          bottleSchema
         );
-        function robustParseArr(str) {
-          // Strip markdown fences
-          let s = str.replace(/\`\`\`json/gi,'').replace(/\`\`\`/g,'').trim();
-          // Find the outermost array
-          const start = s.indexOf('[');
-          const end = s.lastIndexOf(']');
-          if (start === -1 || end === -1) throw new Error('No JSON array in response');
-          s = s.substring(start, end + 1);
-          // Fix trailing commas before } or ]
-          s = s.replace(/,(\s*[\}\]])/g, '$1');
-          // Fix single quotes used instead of double quotes
-          s = s.replace(/'/g, '"');
-          try { return JSON.parse(s); }
-          catch(e) {
-            // Try to extract individual objects
-            const matches = s.match(/\{[^{}]*\}/g) || [];
-            if (matches.length) {
-              return matches.map(m => { try { return JSON.parse(m); } catch(e) { return null; } }).filter(Boolean);
-            }
-            throw new Error('Could not parse response: ' + e.message);
-          }
+        let arr;
+        try {
+          const parsed = JSON.parse(raw);
+          arr = parsed.wines || parsed;
+          if (!Array.isArray(arr)) arr = Object.values(parsed)[0] || [];
+        } catch(e) {
+          // fallback robust parse
+          const s = raw.replace(/```json/g,'').replace(/```/g,'').trim();
+          const start = s.indexOf('['); const end = s.lastIndexOf(']');
+          if (start === -1) throw new Error('No pairing results returned — please try again');
+          arr = JSON.parse(s.substring(start, end+1));
         }
-        const arr = robustParseArr(raw);
         if (!arr.length) throw new Error('No pairing results returned — please try again');
         const fd = { excellent:'dg', good:'dok', passable:'dw' };
         html += `<div class="course-results"><div class="course-results-title">Course ${course.id}</div>`;
