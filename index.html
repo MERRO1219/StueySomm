@@ -397,7 +397,7 @@ async function callClaude(system, parts, schema) {
   const key = getKey();
   if (!key) throw new Error('Please enter your Anthropic API key at the top of the page.');
   const body = {
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-sonnet-4-5-20250929',
     max_tokens: 4096,
     system,
     messages: [{ role:'user', content:buildMsgs(parts) }]
@@ -487,7 +487,7 @@ function renderCourseCard(course) {
       ${removeBtn}
     </div>
     <div class="course-body">
-      <button class="exBtn" id="exBtn-${course.id}" onclick="extractDishes(${course.id})">✦ Extract dishes from menu</button>
+      <button class="exBtn" id="exBtn-${course.id}" onclick="extractDishes(${course.id})">✦ Pick My Plates</button>
       <div id="cdishWrap-${course.id}" style="display:none">
         <span class="slabel">Select dishes for this course (up to 8)</span>
         <div class="dishGrid" id="cdish-${course.id}"></div>
@@ -555,7 +555,7 @@ async function extractDishes(courseId) {
       cachedMenuContent = mc;
     }
   }
-  catch(e) { showErr(e.message); btn.disabled = false; btn.textContent = '✦ Extract dishes from menu'; return; }
+  catch(e) { showErr(e.message); btn.disabled = false; btn.textContent = '✦ Pick My Plates'; return; }
   try {
     const raw = await callClaude(
       `You are a menu parser. Extract ONLY the actual food and drink items a customer would order from this restaurant menu.
@@ -585,7 +585,7 @@ Only output lines in this format, nothing else.`,
     }
     renderCourseDishGrid(courseId);
   } catch(e) { showErr('Could not extract dishes: ' + e.message); }
-  btn.disabled = false; btn.textContent = '✦ Re-extract dishes';
+  btn.disabled = false; btn.textContent = '✦ Pick My Plates Again';
 }
 
 function renderCourseDishGrid(courseId) {
