@@ -358,7 +358,7 @@ async function callClaude(system, parts, schema) {
     messages: [{ role:'user', content:buildMsgs(parts) }]
   };
   if (schema) body.output_format = { type: 'json_schema', schema };
-  const res = await fetch('https://sommbystu.vercel.app/api/pair', {
+  const res = await fetch('https://simplesomm.vercel.app/api/pair', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
