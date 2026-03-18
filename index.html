@@ -392,6 +392,29 @@ function safeParseArr(raw) {
   }
 }
 
+
+// Wine verification - removes hallucinated wines not on the list
+function verifyWines(arr, wineListText, mode) {
+  if (!wineListText || typeof wineListText !== 'string') return arr;
+  const wl = wineListText.toLowerCase();
+  return arr.filter(item => {
+    if (mode === 'glass') {
+      if (item.pairings) {
+        item.pairings = item.pairings.filter(p => {
+          const words = p.wine.toLowerCase().split(' ').filter(w => w.length > 3);
+          if (!words.length) return true;
+          return words.slice(0,3).some(w => wl.includes(w));
+        });
+      }
+      return true;
+    }
+    if (!item.wine) return true;
+    const words = item.wine.toLowerCase().split(' ').filter(w => w.length > 3);
+    if (!words.length) return true;
+    return words.slice(0,3).some(w => wl.includes(w));
+  });
+}
+
 // ─────────────────────────────────────────
 // Course management
 // ─────────────────────────────────────────
@@ -701,6 +724,9 @@ Food menu:`,
           arr = JSON.parse(s.substring(start, end+1));
         }
         if (!arr.length) throw new Error('No pairing results returned — please try again');
+        const wcText2 = wc && wc.type === 'text' ? wc.value : '';
+        const verified2 = verifyWines(arr, wcText2, 'glass');
+        if (verified2.length) arr.splice(0, arr.length, ...verified2);
         html += `<div class="course-results"><div class="course-results-title">Course ${course.id} — By the Glass</div>`;
         arr.forEach(p => {
           html += `<div class="pcard"><div class="dname">${p.dish}</div>`;
@@ -771,6 +797,9 @@ Food menu:`,
           arr = JSON.parse(s.substring(start, end+1));
         }
         if (!arr.length) throw new Error('No pairing results returned — please try again');
+        const wcText = wc && wc.type === 'text' ? wc.value : '';
+        const verified = verifyWines(arr, wcText, 'bottle');
+        if (verified.length) arr.splice(0, arr.length, ...verified);
         const fd = { excellent:'dg', good:'dok', passable:'dw' };
         html += `<div class="course-results"><div class="course-results-title">Course ${course.id}</div>`;
         arr.forEach((w, i) => {
