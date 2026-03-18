@@ -216,6 +216,7 @@ const S = {};
 let courses = [];
 let courseCounter = 0;
 let cachedMenuContent = null; // cache menu so second/third course extractions don't re-fetch
+let cachedWineContent = null; // cache wine list so it's consistent across all courses
 
 
 
@@ -227,6 +228,7 @@ window.addEventListener('load', () => {
   buildSourceTabs('wine');
   addCourse();
   document.getElementById('menu-text')?.addEventListener('input', () => { cachedMenuContent = null; });
+  document.getElementById('wine-text')?.addEventListener('input', () => { cachedWineContent = null; });
 });
 
 // ─────────────────────────────────────────
@@ -241,6 +243,7 @@ function buildSourceTabs(side) {
     b.addEventListener('click', () => {
       S[side].mode = k;
       if (side === 'menu') cachedMenuContent = null; // clear cache when menu source changes
+      if (side === 'wine') cachedWineContent = null; // clear cache when wine source changes
       c.querySelectorAll('.sBtn').forEach(x => x.classList.remove('on'));
       b.classList.add('on');
       ['text','photo','pdf','url'].forEach(t => {
@@ -313,7 +316,7 @@ function cleanHtml(h) {
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
     .replace(/<[^>]+>/g, ' ')
     .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ')
-    .replace(/\s{2,}/g, ' ').trim().slice(0, 12000);
+    .replace(/\s{2,}/g, ' ').trim().slice(0, 100000);
 }
 async function fetchUrl(url) {
   const proxies = [
@@ -623,7 +626,12 @@ async function runAllCourses() {
   btn.disabled = true; btn.textContent = 'Working...';
   setR(loadingHTML('Preparing your selections...'));
   let mc, wc;
-  try { mc = await getContent('menu'); wc = await getContent('wine'); }
+  try {
+    mc = cachedMenuContent || await getContent('menu');
+    if (!cachedMenuContent) cachedMenuContent = mc;
+    wc = cachedWineContent || await getContent('wine');
+    if (!cachedWineContent) cachedWineContent = wc;
+  }
   catch(e) { showErr(e.message); btn.disabled = false; btn.textContent = 'Get Pairings'; return; }
   // byGlass is per-course
   let html = '';
@@ -674,7 +682,7 @@ async function runAllCourses() {
         };
         const raw = await callClaude(
           `You are a world-class sommelier. For each dish, suggest the top 2 wines available by the glass from the wine list.
-CRITICAL RULE: You may ONLY suggest wines that appear VERBATIM on the wine list provided. Do NOT invent, guess, or suggest any wine not explicitly listed. Every wine name and price must be copied exactly as it appears on the wine list. Only suggest wines explicitly marked as available by the glass.
+CRITICAL RULE: You may ONLY suggest wines that appear VERBATIM on the wine list provided below. Do NOT invent, guess, or suggest any wine not explicitly listed in the wine list. Before including any wine in your response, verify it exists word-for-word in the wine list. Every wine name and price must be copied exactly as it appears. Only suggest wines explicitly marked as available by the glass on the wine list.
 ${typeFilter} ${priceFilter} ${glassFilter}
 For each dish provide the 2 best glass pairings with exact wine name copied from the list, type, price as shown, and a 1-2 sentence note explaining why it works.
 Food menu:`,
@@ -742,7 +750,7 @@ Food menu:`,
         };
         const raw = await callClaude(
           `You are a world-class sommelier helping choose the best bottle for a course of dishes.
-CRITICAL RULE: You may ONLY suggest wines that appear VERBATIM on the wine list provided. Do NOT invent, guess, or suggest any wine not explicitly listed. If you are unsure whether a wine is on the list, do not include it. Every wine you suggest must be copied exactly from the wine list.
+CRITICAL RULE: You may ONLY suggest wines that appear VERBATIM on the wine list provided below. Do NOT invent, guess, or suggest any wine not explicitly listed in the wine list. Before including any wine in your response, verify it exists word-for-word in the wine list. Every wine name and price must be copied exactly as it appears. If you cannot find a suitable wine on the list, say so rather than inventing one.
 ${typeFilter} ${priceFilter}
 Suggest 3-6 wines from the wine list ranked best-first by how well they work across all the dishes.
 For each wine include: exact name copied from the list, type, price as shown on the list, a compatibility score 1-100, a 2-3 sentence sommelier note, and a per-dish coverage assessment.
