@@ -694,20 +694,23 @@ async function runAllCourses() {
       if (byGlass) {
         const glassSchema = {
           type: 'object',
+          additionalProperties: false,
           properties: {
             dishes: {
               type: 'array',
               items: {
                 type: 'object',
+                additionalProperties: false,
                 properties: {
                   dish: { type: 'string' },
                   pairings: {
                     type: 'array',
                     items: {
                       type: 'object',
+                      additionalProperties: false,
                       properties: {
                         wine: { type: 'string' },
-                        type: { type: 'string', enum: ['Red','White','Rosé','Sparkling','Dessert','Fortified'] },
+                        type: { type: 'string', enum: ['Red','White','Rose','Sparkling','Dessert','Fortified'] },
                         price: { type: 'string' },
                         note: { type: 'string' }
                       },
@@ -755,14 +758,16 @@ Food menu:`,
       } else {
         const bottleSchema = {
           type: 'object',
+          additionalProperties: false,
           properties: {
             wines: {
               type: 'array',
               items: {
                 type: 'object',
+                additionalProperties: false,
                 properties: {
                   wine: { type: 'string' },
-                  type: { type: 'string', enum: ['Red','White','Rosé','Sparkling','Dessert','Fortified'] },
+                  type: { type: 'string', enum: ['Red','White','Rose','Sparkling','Dessert','Fortified'] },
                   price: { type: 'string' },
                   score: { type: 'number' },
                   sommelier_note: { type: 'string' },
@@ -770,6 +775,7 @@ Food menu:`,
                     type: 'array',
                     items: {
                       type: 'object',
+                      additionalProperties: false,
                       properties: {
                         dish: { type: 'string' },
                         fit: { type: 'string', enum: ['excellent','good','passable'] },
