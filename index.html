@@ -236,6 +236,7 @@ const S = {};
 ['menu','wine'].forEach(k => S[k] = {mode:'text', img:null, imgType:null, pdf:null});
 let courses = [];
 let courseCounter = 0;
+let cachedMenuContent = null; // cache menu so second/third course extractions don't re-fetch
 
 // ─────────────────────────────────────────
 // API Key
@@ -267,6 +268,8 @@ window.addEventListener('load', () => {
   buildSourceTabs('menu');
   buildSourceTabs('wine');
   addCourse();
+  // Clear menu cache when text input changes
+  document.getElementById('menu-text')?.addEventListener('input', () => { cachedMenuContent = null; });
 });
 
 // ─────────────────────────────────────────
@@ -280,6 +283,7 @@ function buildSourceTabs(side) {
     b.textContent = l;
     b.addEventListener('click', () => {
       S[side].mode = k;
+      if (side === 'menu') cachedMenuContent = null; // clear cache when menu source changes
       c.querySelectorAll('.sBtn').forEach(x => x.classList.remove('on'));
       b.classList.add('on');
       ['text','photo','pdf','url'].forEach(t => {
@@ -529,23 +533,43 @@ async function extractDishes(courseId) {
   const btn = document.getElementById('exBtn-' + courseId);
   btn.disabled = true; btn.textContent = 'Extracting...';
   let mc;
-  try { mc = await getContent('menu'); }
+  try {
+    // Use cached menu content if available to avoid re-fetching on each course
+    if (cachedMenuContent) {
+      mc = cachedMenuContent;
+    } else {
+      mc = await getContent('menu');
+      cachedMenuContent = mc;
+    }
+  }
   catch(e) { showErr(e.message); btn.disabled = false; btn.textContent = '✦ Extract dishes from menu'; return; }
   try {
     const raw = await callClaude(
       `You are a menu parser. Extract ONLY the actual food and drink items a customer would order from this restaurant menu.
 Do NOT include: navigation links, page titles, section headers, restaurant name, address, phone numbers, social media, hours, policies, staff names, or any non-food content.
-CRITICAL: Return ONLY a raw JSON array. No markdown, no backticks, no explanation. Start with [ and end with ].
-Each element: {"name":"dish name","desc":"short description or key ingredients, empty string if none"}
-Example: [{"name":"Linguine Vongole","desc":"briny clams, peperoncino, lemon"},{"name":"Tiramisu","desc":"mascarpone, espresso, ladyfingers"}]`,
-      [mc, { type:'text', value:'Extract only real food and drink items. Start your response with [' }]
+Format your response as a simple list. Each line must follow this exact format:
+DISH: dish name | DESC: description or ingredients (leave blank if none)
+Example:
+DISH: Linguine Vongole | DESC: briny clams, peperoncino, lemon
+DISH: Tagliata di Manzo | DESC: 12oz prime NY strip, roasted fingerlings
+DISH: Tiramisu | DESC:
+Only output lines in this format, nothing else.`,
+      [mc, { type:'text', value:'List all food and drink items in the DISH: | DESC: format.' }]
     );
-    const parsed = safeParseArr(raw);
-    course.dishes = parsed.slice(0, 60).map(d =>
-      typeof d === 'string' ? { name:d, desc:'' } :
-      d && d.name ? { name:String(d.name), desc:String(d.desc || d.description || '') } : null
-    ).filter(Boolean);
-    if (!course.dishes.length) throw new Error('No dishes found — try pasting the menu text directly');
+    // Parse the simple line format — much more reliable than JSON
+    const lines = raw.split('\n').map(l => l.trim()).filter(l => l.startsWith('DISH:'));
+    course.dishes = lines.slice(0, 60).map(line => {
+      const dishMatch = line.match(/DISH:\s*([^|]+)/);
+      const descMatch = line.match(/DESC:\s*(.*)/);
+      const name = dishMatch ? dishMatch[1].trim() : '';
+      const desc = descMatch ? descMatch[1].trim() : '';
+      return name ? { name, desc } : null;
+    }).filter(Boolean);
+    if (!course.dishes.length) {
+      // Show what Claude actually returned so we can debug
+      const preview = raw.slice(0, 300).replace(/</g,'&lt;');
+      throw new Error('No dishes found. Claude returned: ' + preview);
+    }
     renderCourseDishGrid(courseId);
   } catch(e) { showErr('Could not extract dishes: ' + e.message); }
   btn.disabled = false; btn.textContent = '✦ Re-extract dishes';
@@ -651,9 +675,9 @@ async function runAllCourses() {
       const priceFilter = course.priceMin || course.priceMax
         ? `Only suggest wines priced${course.priceMin ? ' above $' + course.priceMin : ''}${course.priceMin && course.priceMax ? ' and' : ''}${course.priceMax ? ' below $' + course.priceMax : ''}.`
         : '';
+      const byGlass = course.byGlass;
       const glassFilter = byGlass ? 'Only suggest wines available by the glass. Show the top 2 best by-the-glass options per dish.' : '';
 
-      const byGlass = course.byGlass;
       if (byGlass) {
         const raw = await callClaude(
           `You are a world-class sommelier. For each dish, suggest the top 2 wines available by the glass from the wine list.
