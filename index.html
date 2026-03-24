@@ -319,7 +319,17 @@ function cleanHtml(h) {
     .replace(/\s{2,}/g, ' ').trim().slice(0, 100000);
 }
 async function fetchUrl(url) {
-  // First try our Vercel scrape endpoint which uses ScrapingBee for JS-rendered sites
+  const errorSignals = ['api usage limits', 'rate limit', 'access denied', 'forbidden', 'error occurred', 'something went wrong', 'cloudflare', 'please enable javascript', 'enable cookies'];
+
+  function isGoodContent(text) {
+    if (!text || text.length < 300) return false;
+    const cleaned = cleanHtml(text);
+    const lower = cleaned.toLowerCase();
+    const isError = errorSignals.some(sig => lower.includes(sig)) && cleaned.length < 1000;
+    return !isError && cleaned.length > 300;
+  }
+
+  // 1. Try our Vercel scrape endpoint (handles JS-rendered sites)
   try {
     const res = await Promise.race([
       fetch('https://simplesomm.vercel.app/api/scrape', {
@@ -333,27 +343,46 @@ async function fetchUrl(url) {
       const data = await res.json();
       if (data.content && data.content.length > 300) return data.content;
     }
-  } catch(e) { /* fall through to proxies */ }
+  } catch(e) { /* fall through */ }
 
-  // Fallback to basic proxies for simple HTML sites
+  // 2. Try standard proxies
   const proxies = [
     () => fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`).then(r => r.json()).then(d => d.contents),
     () => fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`).then(r => r.text()),
     () => fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`).then(r => r.text())
   ];
-  const errorSignals = ['api usage limits', 'rate limit', 'access denied', 'forbidden', 'error occurred', 'something went wrong', 'cloudflare', 'please enable javascript', 'enable cookies'];
   for (const proxy of proxies) {
     try {
       const text = await Promise.race([proxy(), new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 8000))]);
-      if (!text || text.length < 200) continue;
-      const cleaned = cleanHtml(text);
-      const lower = cleaned.toLowerCase();
-      const isError = errorSignals.some(sig => lower.includes(sig)) && cleaned.length < 1000;
-      if (isError) continue;
-      if (cleaned.length > 300) return cleaned;
+      if (isGoodContent(text)) return cleanHtml(text);
     } catch(e) { continue; }
   }
-  throw new Error('Could not fetch that URL. Please try uploading a photo or screenshot of the menu instead.');
+
+  // 3. Try Google Cache as free fallback for JS-heavy sites like Wix/Squarespace
+  try {
+    const cacheUrl = `https://webcache.googleusercontent.com/search?q=cache:${encodeURIComponent(url)}`;
+    const res = await Promise.race([
+      fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(cacheUrl)}`).then(r => r.json()).then(d => d.contents),
+      new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 10000))
+    ]);
+    if (isGoodContent(res)) return cleanHtml(res);
+  } catch(e) { /* fall through */ }
+
+  // 4. Try web.archive.org (Wayback Machine) as last resort
+  try {
+    const archiveUrl = `https://archive.org/wayback/available?url=${encodeURIComponent(url)}`;
+    const meta = await fetch(archiveUrl).then(r => r.json());
+    const snapshot = meta?.archived_snapshots?.closest?.url;
+    if (snapshot) {
+      const res = await Promise.race([
+        fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(snapshot)}`).then(r => r.json()).then(d => d.contents),
+        new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 10000))
+      ]);
+      if (isGoodContent(res)) return cleanHtml(res);
+    }
+  } catch(e) { /* fall through */ }
+
+  throw new Error('Could not fetch that URL. Please upload a photo or screenshot of the menu instead — that always works!');
 }
 
 // ─────────────────────────────────────────
