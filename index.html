@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#f7f4ef">
-<title>SimpleSomm by Stu</title>
+<title>SimpleSomm</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -169,7 +169,7 @@ input[type=url]:focus,input[type=text]:focus,input[type=number]:focus{outline:no
 
   <!-- Header -->
   <div class="header">
-    <h1>Simple<span class="by">Somm</span> <span style="font-size:clamp(20px,3vw,28px);font-weight:300;color:var(--ink3)">by Stu</span></h1>
+    <h1>Simple<span class="by">Somm</span></h1>
     <p class="tagline">a wine p<span class="tagline-ai">ai</span>ring app</p>
   </div>
 
@@ -181,7 +181,7 @@ input[type=url]:focus,input[type=text]:focus,input[type=number]:focus{outline:no
       <span class="slabel">Food Menu</span>
       <div class="stabs" id="stabs-menu"></div>
       <div id="sp-menu-text" class="sp on"><textarea id="menu-text" placeholder="Paste the menu here..."></textarea></div>
-      <div id="sp-menu-photo" class="sp"><div class="dropzone"><input type="file" accept="image/*" onchange="onImg('menu',this)"><div class="dico">📷</div><p>Click or drag a photo</p></div><img id="thumb-menu" class="thumb"></div>
+      <div id="sp-menu-photo" class="sp"><div class="dropzone"><input type="file" accept="image/*" onchange="onImg('menu',this)"><div class="dico">📷</div><p>Click, drag, or paste a screenshot</p></div><img id="thumb-menu" class="thumb"></div>
       <div id="sp-menu-pdf" class="sp"><div class="dropzone"><input type="file" accept="application/pdf" onchange="onPdf('menu',this)"><div class="dico">📄</div><p>Click or drag a PDF</p></div><div id="badge-menu"></div></div>
       <div id="sp-menu-url" class="sp"><input type="url" id="menu-url" placeholder="https://restaurant.com/menu"><p class="hint">Page will be fetched automatically</p></div>
     </div>
@@ -189,7 +189,7 @@ input[type=url]:focus,input[type=text]:focus,input[type=number]:focus{outline:no
       <span class="slabel">Wine List</span>
       <div class="stabs" id="stabs-wine"></div>
       <div id="sp-wine-text" class="sp on"><textarea id="wine-text" placeholder="Paste the wine list here..."></textarea></div>
-      <div id="sp-wine-photo" class="sp"><div class="dropzone"><input type="file" accept="image/*" onchange="onImg('wine',this)"><div class="dico">📷</div><p>Click or drag a photo</p></div><img id="thumb-wine" class="thumb"></div>
+      <div id="sp-wine-photo" class="sp"><div class="dropzone"><input type="file" accept="image/*" onchange="onImg('wine',this)"><div class="dico">📷</div><p>Click, drag, or paste a screenshot</p></div><img id="thumb-wine" class="thumb"></div>
       <div id="sp-wine-pdf" class="sp"><div class="dropzone"><input type="file" accept="application/pdf" onchange="onPdf('wine',this)"><div class="dico">📄</div><p>Click or drag a PDF</p></div><div id="badge-wine"></div></div>
       <div id="sp-wine-url" class="sp"><input type="url" id="wine-url" placeholder="https://restaurant.com/wine-list"><p class="hint">Page will be fetched automatically</p></div>
     </div>
@@ -236,7 +236,7 @@ window.addEventListener('load', () => {
 // ─────────────────────────────────────────
 function buildSourceTabs(side) {
   const c = document.getElementById('stabs-' + side);
-  [['text','Text'],['photo','Photo'],['pdf','PDF'],['url','Link']].forEach(([k,l], i) => {
+  [['text','Text'],['photo','Photo/Screenshot'],['pdf','PDF'],['url','Link']].forEach(([k,l], i) => {
     const b = document.createElement('button');
     b.className = 'sBtn' + (i === 0 ? ' on' : '');
     b.textContent = l;
@@ -319,27 +319,41 @@ function cleanHtml(h) {
     .replace(/\s{2,}/g, ' ').trim().slice(0, 100000);
 }
 async function fetchUrl(url) {
+  // First try our Vercel scrape endpoint which uses ScrapingBee for JS-rendered sites
+  try {
+    const res = await Promise.race([
+      fetch('https://simplesomm.vercel.app/api/scrape', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      }),
+      new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 12000))
+    ]);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.content && data.content.length > 300) return data.content;
+    }
+  } catch(e) { /* fall through to proxies */ }
+
+  // Fallback to basic proxies for simple HTML sites
   const proxies = [
     () => fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`).then(r => r.json()).then(d => d.contents),
     () => fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`).then(r => r.text()),
     () => fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`).then(r => r.text())
   ];
-  // Words that indicate we got an error page rather than menu content
-  const errorSignals = ['api usage limits', 'rate limit', 'access denied', 'forbidden', '403', '404', 'not found', 'error occurred', 'something went wrong', 'cloudflare', 'please enable javascript', 'enable cookies'];
+  const errorSignals = ['api usage limits', 'rate limit', 'access denied', 'forbidden', 'error occurred', 'something went wrong', 'cloudflare', 'please enable javascript', 'enable cookies'];
   for (const proxy of proxies) {
     try {
       const text = await Promise.race([proxy(), new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 8000))]);
       if (!text || text.length < 200) continue;
       const cleaned = cleanHtml(text);
       const lower = cleaned.toLowerCase();
-      // Check if we got an error page instead of real content
       const isError = errorSignals.some(sig => lower.includes(sig)) && cleaned.length < 1000;
       if (isError) continue;
-      // Check it has food-like content (at least some words that look like a menu)
       if (cleaned.length > 300) return cleaned;
     } catch(e) { continue; }
   }
-  throw new Error('Could not fetch that URL automatically. Please copy and paste the menu text directly into the Text tab instead.');
+  throw new Error('Could not fetch that URL. Please try uploading a photo or screenshot of the menu instead.');
 }
 
 // ─────────────────────────────────────────
