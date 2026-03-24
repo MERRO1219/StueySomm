@@ -8,36 +8,34 @@ export default async function handler(req, res) {
   if (!url) { res.status(400).json({ error: 'URL required' }); return; }
 
   try {
-    // Try ScrapingBee first — handles JS-rendered sites (Wix, Squarespace etc.)
-    const apiKey = process.env.SCRAPINGBEE_KEY;
-    if (apiKey) {
-      const sbUrl = `https://app.scrapingbee.com/api/v1/?api_key=${apiKey}&url=${encodeURIComponent(url)}&render_js=true&block_ads=true&block_resources=true`;
+    // Try ScrapingBee if key is available (optional paid upgrade)
+    const sbKey = process.env.SCRAPINGBEE_KEY;
+    if (sbKey) {
+      const sbUrl = `https://app.scrapingbee.com/api/v1/?api_key=${sbKey}&url=${encodeURIComponent(url)}&render_js=true&block_ads=true&block_resources=true`;
       const sbRes = await fetch(sbUrl, { signal: AbortSignal.timeout(15000) });
       if (sbRes.ok) {
         const html = await sbRes.text();
         const cleaned = cleanHtml(html);
-        if (cleaned.length > 300) {
-          res.status(200).json({ content: cleaned });
-          return;
-        }
+        if (cleaned.length > 300) { res.status(200).json({ content: cleaned }); return; }
       }
     }
 
-    // Fallback — simple fetch for plain HTML sites
-    const plainRes = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SimpleSomm/1.0)' },
-      signal: AbortSignal.timeout(10000)
-    });
+    // Free fallback — direct fetch with real browser headers
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Cache-Control': 'no-cache',
+    };
+
+    const plainRes = await fetch(url, { headers, signal: AbortSignal.timeout(10000) });
     if (plainRes.ok) {
       const html = await plainRes.text();
       const cleaned = cleanHtml(html);
-      if (cleaned.length > 300) {
-        res.status(200).json({ content: cleaned });
-        return;
-      }
+      if (cleaned.length > 300) { res.status(200).json({ content: cleaned }); return; }
     }
 
-    res.status(422).json({ error: 'Could not extract content from URL' });
+    res.status(422).json({ error: 'Could not extract content' });
   } catch(e) {
     res.status(500).json({ error: e.message });
   }
