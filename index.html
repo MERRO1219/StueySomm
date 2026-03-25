@@ -701,7 +701,10 @@ async function runAllCourses() {
   catch(e) { showErr(e.message); btn.disabled = false; btn.textContent = 'Get Pairings'; return; }
   // byGlass is per-course
   let html = '';
-  for (const course of activeCourses) {
+  for (let ci = 0; ci < activeCourses.length; ci++) {
+    const course = activeCourses[ci];
+    // Add delay between courses to avoid rate limits
+    if (ci > 0) await new Promise(r => setTimeout(r, 6000));
     setR(loadingHTML(`Pairing Course ${course.id}...`));
     try {
       const dishList = course.picked.map(d => d.desc ? `${d.name} (${d.desc})` : d.name).join(', ');
