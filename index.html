@@ -195,11 +195,39 @@ input[type=url]:focus,input[type=text]:focus,input[type=number]:focus{outline:no
     </div>
   </div>
 
-  <!-- Courses -->
-  <div id="coursesWrap"></div>
-
-  <!-- Add course -->
-  <button class="add-course-btn" id="addCourseBtn" onclick="addCourse()">+ Add Another Course</button>
+  <!-- Dishes -->
+  <div class="course-card" id="course-1">
+    <div class="course-bar"><div class="course-bar-title">Your Dishes</div></div>
+    <div class="course-body">
+      <button class="exBtn" id="exBtn-1" onclick="extractDishes(1)">&#10022; Pick My Plates</button>
+      <div id="cdishWrap-1" style="display:none">
+        <span class="slabel">Select up to 8 dishes:</span>
+        <div class="dishGrid" id="cdish-1"></div>
+      </div>
+      <div id="cpills-1" class="pillRow"></div>
+      <div class="manRow">
+        <input type="text" id="cman-1" placeholder="Or type a dish name and press Add">
+        <button class="secBtn" onclick="addManualDish(1)">Add</button>
+      </div>
+      <span class="slabel" style="margin-top:1rem">Wine preference</span>
+      <div class="wtype-wrap" id="cwtype-1"></div>
+      <span class="slabel" style="margin-top:1rem">Price range</span>
+      <div class="price-row">
+        <div><label>Min ($)</label><input type="number" id="cpmin-1" placeholder="Any" min="0" oninput="updateCourse(1)"></div>
+        <div><label>Max ($)</label><input type="number" id="cpmax-1" placeholder="Any" min="0" oninput="updateCourse(1)"></div>
+      </div>
+      <div class="course-glass-wrap" style="margin-top:1rem;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--paper);border:1px solid var(--border);border-radius:10px;">
+        <div>
+          <div style="font-size:14px;color:var(--ink);font-family:'Jost',sans-serif;">By the glass</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:2px;">Show top 2 glass options per dish</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="cglass-1" onchange="updateCourse(1)">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+  </div>
 
   <!-- Get pairings -->
   <button class="bigBtn" id="mainBtn" onclick="runAllCourses()">Get Pairings</button>
@@ -226,7 +254,26 @@ let cachedWineContent = null; // cache wine list so it's consistent across all c
 window.addEventListener('load', () => {
   buildSourceTabs('menu');
   buildSourceTabs('wine');
-  addCourse();
+  // Initialize single fixed course
+  courseCounter = 1;
+  const fixedCourse = { id:1, dishes:[], picked:[], wineType:'any', priceMin:'', priceMax:'', byGlass:false };
+  courses.push(fixedCourse);
+  // Build wine type buttons for the fixed course
+  const wtWrap = document.getElementById('cwtype-1');
+  if (wtWrap) {
+    wineTypes.forEach(wt => {
+      const b = document.createElement('button');
+      b.className = 'wtype-btn' + (wt.id === 'any' ? ' on' : '');
+      b.textContent = wt.label;
+      b.addEventListener('click', () => {
+        wtWrap.querySelectorAll('.wtype-btn').forEach(x => x.classList.remove('on'));
+        b.classList.add('on');
+        fixedCourse.wineType = wt.id;
+      });
+      wtWrap.appendChild(b);
+    });
+  }
+  document.getElementById('cman-1')?.addEventListener('keydown', e => { if (e.key === 'Enter') addManualDish(1); });
   document.getElementById('menu-text')?.addEventListener('input', () => { cachedMenuContent = null; });
   document.getElementById('wine-text')?.addEventListener('input', () => { cachedWineContent = null; });
 });
@@ -469,91 +516,9 @@ const wineTypes = [
   { id:'dessert', label:'Dessert' },
 ];
 
-function addCourse() {
-  if (courses.length >= 4) return;
-  courseCounter++;
-  const course = { id:courseCounter, dishes:[], picked:[], wineType:'any', priceMin:'', priceMax:'', byGlass:false };
-  courses.push(course);
-  renderCourseCard(course);
-  updateAddBtn();
-}
 
-function removeCourse(id) {
-  courses = courses.filter(c => c.id !== id);
-  document.getElementById('course-' + id)?.remove();
-  updateAddBtn();
-}
 
-function updateAddBtn() {
-  const btn = document.getElementById('addCourseBtn');
-  btn.disabled = courses.length >= 4;
-  btn.textContent = courses.length >= 4 ? 'Maximum 4 courses reached' : '+ Add Another Course';
-}
 
-function renderCourseCard(course) {
-  const wrap = document.getElementById('coursesWrap');
-  const div = document.createElement('div');
-  div.className = 'course-card';
-  div.id = 'course-' + course.id;
-
-  const removeBtn = courseCounter > 1 ? `<button class="remove-course" onclick="removeCourse(${course.id})">×</button>` : '';
-
-  div.innerHTML = `
-    <div class="course-bar">
-      <div class="course-bar-title">Course ${course.id}</div>
-      ${removeBtn}
-    </div>
-    <div class="course-body">
-      <button class="exBtn" id="exBtn-${course.id}" onclick="extractDishes(${course.id})">✦ Pick My Plates</button>
-      <div id="cdishWrap-${course.id}" style="display:none">
-        <span class="slabel">Select dishes for this course (up to 8)</span>
-        <div class="dishGrid" id="cdish-${course.id}"></div>
-      </div>
-      <div id="cpills-${course.id}" class="pillRow"></div>
-      <div class="manRow">
-        <input type="text" id="cman-${course.id}" placeholder="Or type a dish name and press Add">
-        <button class="secBtn" onclick="addManualDish(${course.id})">Add</button>
-      </div>
-      <span class="slabel" style="margin-top:1rem">Wine preference</span>
-      <div class="wtype-wrap" id="cwtype-${course.id}"></div>
-      <span class="slabel" style="margin-top:1rem">Price range</span>
-      <div class="price-row">
-        <div><label>Min ($)</label><input type="number" id="cpmin-${course.id}" placeholder="Any" min="0" oninput="updateCourse(${course.id})"></div>
-        <div><label>Max ($)</label><input type="number" id="cpmax-${course.id}" placeholder="Any" min="0" oninput="updateCourse(${course.id})"></div>
-      </div>
-      <div class="course-glass-wrap" style="margin-top:1rem;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--paper);border:1px solid var(--border);border-radius:10px;">
-        <div>
-          <div style="font-size:14px;color:var(--ink);font-family:'Jost',sans-serif;">By the glass</div>
-          <div style="font-size:12px;color:var(--ink3);margin-top:2px;">Show top 2 glass options per dish</div>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" id="cglass-${course.id}" onchange="updateCourse(${course.id})">
-          <span class="toggle-track"></span>
-        </label>
-      </div>
-    </div>`;
-
-  wrap.appendChild(div);
-
-  // Build wine type buttons
-  const wtWrap = document.getElementById('cwtype-' + course.id);
-  wineTypes.forEach(wt => {
-    const b = document.createElement('button');
-    b.className = 'wtype-btn' + (wt.id === 'any' ? ' on' : '');
-    b.textContent = wt.label;
-    b.addEventListener('click', () => {
-      wtWrap.querySelectorAll('.wtype-btn').forEach(x => x.classList.remove('on'));
-      b.classList.add('on');
-      course.wineType = wt.id;
-    });
-    wtWrap.appendChild(b);
-  });
-
-  // Enter key on manual input
-  document.getElementById('cman-' + course.id)?.addEventListener('keydown', e => {
-    if (e.key === 'Enter') addManualDish(course.id);
-  });
-}
 
 // ─────────────────────────────────────────
 // Extract dishes (per course)
@@ -753,11 +718,10 @@ async function runAllCourses() {
           required: ['dishes']
         };
         const raw = await callClaude(
-          `You are a world-class sommelier. For each dish suggest the top 2 wines available by the glass.
-CRITICAL RULE: You may ONLY suggest wines from the CONFIRMED WINE LIST below. Every wine name must match exactly. Do not suggest any wine not on this list.
+          `You are a world-class sommelier. For each dish, suggest the top 2 wines available by the glass from the wine list.
+CRITICAL RULE: You may ONLY suggest wines that appear VERBATIM on the wine list provided below. Do NOT invent, guess, or suggest any wine not explicitly listed in the wine list. Before including any wine in your response, verify it exists word-for-word in the wine list. Every wine name and price must be copied exactly as it appears. Only suggest wines explicitly marked as available by the glass on the wine list.
 ${typeFilter} ${priceFilter} ${glassFilter}
-${confirmedWines ? 'CONFIRMED WINE LIST (use ONLY these wines):\n' + confirmedWines : ''}
-For each dish provide 2 by-the-glass pairings with exact wine name, type, price, and 1-2 sentence note.
+For each dish provide the 2 best glass pairings with exact wine name copied from the list, type, price as shown, and a 1-2 sentence note explaining why it works.
 Food menu:`,
           [mcTrimmed, {type:'text',value:'Wine list:'}, wcTrimmed, {type:'text',value:`Dishes for this course: ${dishList}.`}],
           glassSchema
