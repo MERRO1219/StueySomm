@@ -753,10 +753,11 @@ async function runAllCourses() {
           required: ['dishes']
         };
         const raw = await callClaude(
-          `You are a world-class sommelier. For each dish, suggest the top 2 wines available by the glass from the wine list.
-CRITICAL RULE: You may ONLY suggest wines that appear VERBATIM on the wine list provided below. Do NOT invent, guess, or suggest any wine not explicitly listed in the wine list. Before including any wine in your response, verify it exists word-for-word in the wine list. Every wine name and price must be copied exactly as it appears. Only suggest wines explicitly marked as available by the glass on the wine list.
+          `You are a world-class sommelier. For each dish suggest the top 2 wines available by the glass.
+CRITICAL RULE: You may ONLY suggest wines from the CONFIRMED WINE LIST below. Every wine name must match exactly. Do not suggest any wine not on this list.
 ${typeFilter} ${priceFilter} ${glassFilter}
-For each dish provide the 2 best glass pairings with exact wine name copied from the list, type, price as shown, and a 1-2 sentence note explaining why it works.
+${confirmedWines ? 'CONFIRMED WINE LIST (use ONLY these wines):\n' + confirmedWines : ''}
+For each dish provide 2 by-the-glass pairings with exact wine name, type, price, and 1-2 sentence note.
 Food menu:`,
           [mcTrimmed, {type:'text',value:'Wine list:'}, wcTrimmed, {type:'text',value:`Dishes for this course: ${dishList}.`}],
           glassSchema
