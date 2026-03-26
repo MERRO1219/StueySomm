@@ -448,25 +448,7 @@ function renderPills() {
   list.innerHTML = picked.map((d,i) => `<span class="spill">${d.name}<button onclick="removePicked(${i})">×</button></span>`).join("");
 }
 
-function verifyWines(arr, wineText, mode) {
-  if (!wineText || wineText.length < 50) return arr;
-  const wl = wineText.toLowerCase();
-  return arr.filter(item => {
-    if (mode === "glass") {
-      if (item.pairings) {
-        item.pairings = item.pairings.filter(p => {
-          if (!p.wine) return false;
-          const words = p.wine.toLowerCase().split(" ").filter(w => w.length > 4);
-          return !words.length || words.some(w => wl.includes(w));
-        });
-      }
-      return true;
-    }
-    if (!item.wine) return true;
-    const words = item.wine.toLowerCase().split(" ").filter(w => w.length > 4);
-    return !words.length || words.some(w => wl.includes(w));
-  });
-}
+
 
 async function getPairings() {
   const btn = document.getElementById("mainBtn");
@@ -509,8 +491,7 @@ async function getPairings() {
       );
       let arr;
       try { const p = JSON.parse(raw); arr = p.dishes || p; } catch(e) { throw new Error("Could not parse results"); }
-      const wcText = wc.type === "text" ? wc.value : "";
-        const verified = verifyWines(arr, wcText, "glass");
+      const verified = arr;
       let html = `<div class="divider">By the Glass Pairings</div>`;
       verified.forEach(p => {
         html += `<div class="pcard"><div class="dname">${p.dish}</div>`;
@@ -545,9 +526,8 @@ async function getPairings() {
       );
       let arr;
       try { const p = JSON.parse(raw); arr = p.wines || p; if (!Array.isArray(arr)) arr = Object.values(p)[0]||[]; } catch(e) { throw new Error("Could not parse results"); }
-      const wcText = wc.type === "text" ? wc.value : "";
-      const verified = verifyWines(arr, wcText, "bottle");
-      if (!verified.length) throw new Error("No matching wines found. Please try again.");
+      const verified = arr;
+      if (!verified.length) throw new Error("No wine pairings returned. Please try again.");
       const fd = {excellent:"dg",good:"dok",passable:"dw"};
       let html = `<div class="divider">Best Wines &mdash; Ranked</div>`;
       verified.forEach((w,i) => {
