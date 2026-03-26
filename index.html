@@ -20,532 +20,872 @@
   --blue-bg:#eef3fb;--blue-text:#1a3f7a;
   --amber-bg:#fdf3e4;--amber-text:#7a4d0a;
   --red-bg:#faeced;--red-text:#7a1f28;
-  --rlg:16px;--touch:48px;
+  --rlg:16px;
+  --touch:48px;
 }
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
-body{font-family:"Jost",sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;overflow-x:hidden;}
+body{font-family:'Jost',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;overflow-x:hidden;}
 .page{max-width:860px;margin:0 auto;padding:2rem 1rem 6rem;}
+
+/* ── Header ── */
 .header{text-align:center;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
-.header h1{font-family:"Cormorant Garamond",serif;font-size:clamp(40px,8vw,64px);font-weight:300;letter-spacing:.03em;color:var(--ink);line-height:1;margin-bottom:.4rem;}
-.header h1 .s{color:var(--wine);}
-.tagline{font-size:13px;color:var(--ink3);letter-spacing:.05em;}
+.header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,8vw,64px);font-weight:300;letter-spacing:.03em;color:var(--ink);line-height:1;margin-bottom:.4rem;}
+.header h1 .by{color:var(--wine);}
+.tagline{font-size:13px;color:var(--ink3);letter-spacing:.05em;font-family:'Jost',sans-serif;}
 .tagline-ai{font-weight:700;font-style:normal;color:var(--wine);}
+
+
+
+/* ── Section label ── */
+.slabel{font-size:10px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:.15em;display:block;margin-bottom:10px;}
+
+/* ── Cards ── */
 .card{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem;margin-bottom:1rem;}
+
+/* ── Grid ── */
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;}
 @media(max-width:540px){.grid2{grid-template-columns:1fr;}}
-.slabel{font-size:10px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:.15em;display:block;margin-bottom:10px;}
+
+/* ── Source tabs ── */
 .stabs{display:flex;gap:2px;background:var(--paper);border-radius:10px;padding:3px;margin-bottom:10px;}
-.sBtn{flex:1;padding:8px 4px;font-size:12px;font-family:"Jost",sans-serif;color:var(--ink3);cursor:pointer;border:none;background:none;border-radius:8px;text-align:center;transition:all .12s;min-height:36px;}
+.sBtn{flex:1;padding:8px 4px;font-size:12px;font-family:'Jost',sans-serif;color:var(--ink3);cursor:pointer;border:none;background:none;border-radius:8px;text-align:center;transition:all .12s;min-height:36px;}
 .sBtn.on{background:var(--wine-light);color:var(--wine);font-weight:500;border:1px solid var(--wine-mid);}
 .sp{display:none;}.sp.on{display:block;}
-textarea{width:100%;height:145px;font-size:14px;font-family:"Jost",sans-serif;resize:vertical;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--paper);color:var(--ink);line-height:1.6;}
+textarea{width:100%;height:140px;font-size:14px;font-family:'Jost',sans-serif;resize:vertical;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--paper);color:var(--ink);line-height:1.6;}
 textarea:focus{outline:none;border-color:var(--wine);}
-input[type=url],input[type=text],input[type=number]{width:100%;padding:12px;font-size:14px;font-family:"Jost",sans-serif;border:1px solid var(--border);border-radius:10px;background:var(--paper);color:var(--ink);min-height:var(--touch);}
+input[type=url],input[type=text],input[type=number]{width:100%;padding:12px;font-size:14px;font-family:'Jost',sans-serif;border:1px solid var(--border);border-radius:10px;background:var(--paper);color:var(--ink);min-height:var(--touch);}
 input[type=url]:focus,input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--wine);}
 .hint{font-size:12px;color:var(--ink3);margin-top:5px;line-height:1.5;}
-.dropzone{border:1.5px dashed var(--border2);border-radius:10px;padding:1.25rem;text-align:center;background:var(--paper);position:relative;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;}
-.dropzone:hover{border-color:var(--wine);}
+.dropzone{border:1.5px dashed var(--border2);border-radius:10px;padding:1.25rem;text-align:center;background:var(--paper);position:relative;min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;}
 .dropzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.dropzone .dico{font-size:20px;}
+.dropzone .dico{font-size:22px;}
 .dropzone p{font-size:13px;color:var(--ink3);}
 .fbadge{display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green-text);font-size:12px;padding:4px 12px;border-radius:20px;margin-top:8px;}
 .thumb{width:100%;max-height:110px;object-fit:cover;border-radius:10px;margin-top:8px;display:none;}
+
+/* ── By the glass toggle ── */
 .glass-wrap{display:flex;align-items:center;justify-content:space-between;background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1rem 1.25rem;margin-bottom:1rem;}
-.glass-label{font-size:15px;color:var(--ink);font-weight:400;}
+.glass-label{font-size:15px;color:var(--ink);font-family:'Jost',sans-serif;font-weight:400;}
 .glass-label small{display:block;font-size:12px;color:var(--ink3);margin-top:2px;line-height:1.4;}
 .toggle{position:relative;width:52px;height:28px;flex-shrink:0;}
 .toggle input{opacity:0;width:0;height:0;position:absolute;}
 .toggle-track{position:absolute;inset:0;background:var(--border2);border-radius:14px;cursor:pointer;transition:background .2s;}
-.toggle-track::before{content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.toggle-track::before{content:'';position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
 .toggle input:checked+.toggle-track{background:var(--wine);}
 .toggle input:checked+.toggle-track::before{transform:translateX(24px);}
-.wtype-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px;}
-.wtype-btn{padding:8px 14px;font-size:13px;font-family:"Jost",sans-serif;border:1px solid var(--border2);border-radius:20px;background:var(--paper);color:var(--ink2);cursor:pointer;transition:all .12s;min-height:36px;}
-.wtype-btn.on{background:var(--wine-light);color:var(--wine);border-color:var(--wine-mid);font-weight:500;}
-.price-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.price-row label{font-size:11px;color:var(--ink3);display:block;margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase;}
-.price-row input{height:44px;}
+
+/* ── Course card ── */
+.course-card{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);margin-bottom:1rem;overflow:hidden;}
+.course-bar{background:var(--wine);padding:.6rem 1.25rem;display:flex;align-items:center;justify-content:space-between;}
+.course-bar-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;color:#fff;letter-spacing:.04em;}
+.remove-course{background:rgba(255,255,255,.2);border:none;color:#fff;cursor:pointer;font-size:18px;line-height:1;padding:4px 8px;border-radius:6px;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;}
+.course-body{padding:1.25rem;}
+
+/* ── Extract button ── */
+.exBtn{width:100%;padding:13px;font-size:14px;font-family:'Jost',sans-serif;background:var(--paper);border:1px solid var(--border);border-radius:10px;color:var(--ink2);cursor:pointer;margin-bottom:12px;transition:all .12s;min-height:var(--touch);}
+.exBtn:hover{border-color:var(--wine);color:var(--wine);}
+.exBtn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ── Dish chips ── */
 .dishGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:12px;}
 @media(max-width:400px){.dishGrid{grid-template-columns:1fr 1fr;}}
-.dchip{padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:13px;font-family:"Jost",sans-serif;color:var(--ink2);cursor:pointer;background:var(--cream);line-height:1.3;user-select:none;transition:all .12s;min-height:44px;display:flex;flex-direction:column;justify-content:center;}
+.dchip{padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:13px;font-family:'Jost',sans-serif;color:var(--ink2);cursor:pointer;background:var(--cream);line-height:1.3;user-select:none;transition:all .12s;min-height:44px;display:flex;flex-direction:column;justify-content:center;}
 .dchip:active{transform:scale(.97);}
 .dchip.picked{background:var(--wine-light);color:var(--wine);border-color:var(--wine-mid);font-weight:500;}
 .dchip.grey{opacity:.35;pointer-events:none;}
 .manRow{display:flex;gap:8px;margin-top:10px;}
 .manRow input{flex:1;}
-.secBtn{padding:12px 16px;font-size:14px;font-family:"Jost",sans-serif;border:1px solid var(--border2);border-radius:10px;background:none;color:var(--ink);cursor:pointer;white-space:nowrap;min-height:var(--touch);}
-.pillRow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
-.spill{display:inline-flex;align-items:center;gap:6px;background:var(--wine-light);color:var(--wine);font-size:13px;padding:6px 12px;border-radius:20px;}
+.secBtn{padding:12px 16px;font-size:14px;font-family:'Jost',sans-serif;border:1px solid var(--border2);border-radius:10px;background:none;color:var(--ink);cursor:pointer;white-space:nowrap;min-height:var(--touch);}
+.pillRow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:0;}
+.spill{display:inline-flex;align-items:center;gap:6px;background:var(--wine-light);color:var(--wine);font-size:13px;padding:6px 12px;border-radius:20px;font-family:'Jost',sans-serif;}
 .spill button{background:none;border:none;cursor:pointer;color:var(--wine-mid);font-size:16px;padding:0;line-height:1;min-width:20px;min-height:20px;}
-.exBtn{width:100%;padding:13px;font-size:14px;font-family:"Jost",sans-serif;background:var(--paper);border:1px solid var(--border);border-radius:10px;color:var(--ink2);cursor:pointer;margin-bottom:12px;transition:all .12s;min-height:var(--touch);}
-.exBtn:hover{border-color:var(--wine);color:var(--wine);}
-.exBtn:disabled{opacity:.4;cursor:not-allowed;}
-.bigBtn{width:100%;padding:16px;background:var(--wine);color:#fff;border:none;border-radius:var(--rlg);font-size:17px;font-family:"Cormorant Garamond",serif;font-weight:400;cursor:pointer;letter-spacing:.04em;transition:all .15s;min-height:56px;margin-top:.5rem;}
+
+/* ── Wine type selector ── */
+.wtype-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px;}
+.wtype-btn{padding:8px 14px;font-size:13px;font-family:'Jost',sans-serif;border:1px solid var(--border2);border-radius:20px;background:var(--paper);color:var(--ink2);cursor:pointer;transition:all .12s;min-height:36px;}
+.wtype-btn.on{background:var(--wine-light);color:var(--wine);border-color:var(--wine-mid);font-weight:500;}
+
+/* ── Price row ── */
+.price-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.price-row label{font-size:11px;color:var(--ink3);display:block;margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase;}
+.price-row input{height:44px;}
+
+/* ── Add course / main buttons ── */
+.add-course-btn{width:100%;padding:14px;background:none;border:1.5px dashed var(--border2);border-radius:var(--rlg);font-size:15px;font-family:'Cormorant Garamond',serif;color:var(--ink3);cursor:pointer;transition:all .15s;margin-bottom:1rem;letter-spacing:.04em;min-height:52px;}
+.add-course-btn:hover{border-color:var(--wine);color:var(--wine);}
+.add-course-btn:disabled{opacity:.35;cursor:not-allowed;}
+.bigBtn{width:100%;padding:16px;background:var(--wine);color:#fff;border:none;border-radius:var(--rlg);font-size:17px;font-family:'Cormorant Garamond',serif;font-weight:400;cursor:pointer;letter-spacing:.04em;transition:all .15s;min-height:56px;}
 .bigBtn:active{transform:scale(.98);}
 .bigBtn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ── Results ── */
 #results{margin-top:2rem;}
-.divider{font-size:11px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:.12em;margin:1.5rem 0 1rem;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.course-results{margin-bottom:2.5rem;}
+.course-results-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ink);margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.course-results-title::before{content:'';display:inline-block;width:3px;height:20px;background:var(--wine);border-radius:2px;flex-shrink:0;}
+
+/* Pairing cards */
 .pcard{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem;margin-bottom:.75rem;}
-.dname{font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:400;color:var(--ink);margin-bottom:4px;}
-.wrow{font-size:13px;color:var(--ink2);margin-bottom:8px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-family:"Jost",sans-serif;}
+.dname{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--ink);margin-bottom:4px;}
+.wrow{font-size:13px;color:var(--ink2);margin-bottom:8px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-family:'Jost',sans-serif;}
 .wname{font-weight:500;color:var(--ink);}
 .wprice{color:var(--gold);font-size:12px;}
-.wbadge{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500;font-family:"Jost",sans-serif;letter-spacing:.03em;}
-.rat{font-size:13px;color:var(--ink2);line-height:1.75;border-top:1px solid var(--border);padding-top:10px;margin-top:10px;font-family:"Jost",sans-serif;}
+.wbadge{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500;font-family:'Jost',sans-serif;letter-spacing:.03em;}
+.rat{font-size:13px;color:var(--ink2);line-height:1.75;border-top:1px solid var(--border);padding-top:10px;margin-top:10px;font-family:'Jost',sans-serif;}
+.tags{margin-bottom:4px;}
+.tag{display:inline-block;font-size:11px;padding:3px 9px;border-radius:20px;background:var(--paper);color:var(--ink3);border:1px solid var(--border);margin:2px 3px 2px 0;}
+.alts{margin-top:8px;font-size:12px;color:var(--ink3);}
+.alts b{color:var(--ink2);}
+
+/* Group bottle cards */
 .gcard{background:var(--cream);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem;margin-bottom:.75rem;}
 .ghead{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;}
 .gnum{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:var(--wine-light);border-radius:50%;font-size:13px;font-weight:500;color:var(--wine);flex-shrink:0;}
-.gwname{font-family:"Cormorant Garamond",serif;font-size:18px;font-weight:400;color:var(--ink);}
+.gwname{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--ink);}
 .sbar{margin:8px 0;}
 .sbl{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-bottom:4px;}
 .sbg{height:5px;background:var(--paper);border-radius:3px;overflow:hidden;border:1px solid var(--border);}
 .sbf{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--wine-mid),var(--wine));}
 .covWrap{margin-top:10px;border-top:1px solid var(--border);padding-top:10px;}
 .covLabel{font-size:10px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;}
-.crow{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--ink2);margin-bottom:5px;line-height:1.5;font-family:"Jost",sans-serif;}
+.crow{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--ink2);margin-bottom:5px;line-height:1.5;}
 .dg{width:8px;height:8px;border-radius:50%;background:#2d9e58;flex-shrink:0;margin-top:4px;}
 .dok{width:8px;height:8px;border-radius:50%;background:#c98a1a;flex-shrink:0;margin-top:4px;}
 .dw{width:8px;height:8px;border-radius:50%;background:#b83232;flex-shrink:0;margin-top:4px;}
-.snote{font-size:13px;color:var(--ink2);line-height:1.75;margin-top:10px;border-top:1px solid var(--border);padding-top:10px;font-family:"Jost",sans-serif;}
+.snote{font-size:13px;color:var(--ink2);line-height:1.75;margin-top:10px;border-top:1px solid var(--border);padding-top:10px;}
 .leg{display:flex;gap:14px;font-size:12px;color:var(--ink3);margin-top:10px;flex-wrap:wrap;}
 .legdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle;}
+
+/* Loading & errors */
 .loading{text-align:center;padding:3rem 1rem;color:var(--ink3);}
 .spin{width:28px;height:28px;border:2px solid var(--border2);border-top-color:var(--wine);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 14px;}
-.loading-text{font-family:"Cormorant Garamond",serif;font-size:18px;font-style:italic;color:var(--ink2);}
+.loading-text{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:var(--ink2);}
 @keyframes spin{to{transform:rotate(360deg)}}
-.err{background:var(--red-bg);border:1px solid #e8b8bc;color:var(--red-text);padding:14px 16px;border-radius:10px;font-size:13px;margin-top:1rem;line-height:1.6;font-family:"Jost",sans-serif;}
+.err{background:var(--red-bg);border:1px solid #e8b8bc;color:var(--red-text);padding:14px 16px;border-radius:10px;font-size:13px;margin-top:1rem;line-height:1.6;}
 </style>
 </head>
 <body>
 <div class="page">
 
+  <!-- Header -->
   <div class="header">
-    <h1>Simple<span class="s">Somm</span></h1>
+    <h1>Simple<span class="by">Somm</span></h1>
     <p class="tagline">a wine p<span class="tagline-ai">ai</span>ring app</p>
   </div>
 
+
+
+  <!-- Menu & Wine inputs -->
   <div class="grid2">
     <div class="card">
       <span class="slabel">Food Menu</span>
       <div class="stabs" id="stabs-menu"></div>
       <div id="sp-menu-text" class="sp on"><textarea id="menu-text" placeholder="Paste the menu here..."></textarea></div>
-      <div id="sp-menu-photo" class="sp"><div class="dropzone"><input type="file" accept="image/*" onchange="onImg('menu',this)"><div class="dico">&#128247;</div><p>Click, drag, or paste a screenshot</p></div><img id="thumb-menu" class="thumb"></div>
-      <div id="sp-menu-pdf" class="sp"><div class="dropzone"><input type="file" accept="application/pdf" onchange="onPdf('menu',this)"><div class="dico">&#128196;</div><p>Click or drag a PDF</p></div><div id="badge-menu"></div></div>
+      <div id="sp-menu-photo" class="sp"><div class="dropzone"><input type="file" accept="image/*" onchange="onImg('menu',this)"><div class="dico">📷</div><p>Click, drag, or paste a screenshot</p></div><img id="thumb-menu" class="thumb"></div>
+      <div id="sp-menu-pdf" class="sp"><div class="dropzone"><input type="file" accept="application/pdf" onchange="onPdf('menu',this)"><div class="dico">📄</div><p>Click or drag a PDF</p></div><div id="badge-menu"></div></div>
       <div id="sp-menu-url" class="sp"><input type="url" id="menu-url" placeholder="https://restaurant.com/menu"><p class="hint">Page will be fetched automatically</p></div>
     </div>
     <div class="card">
       <span class="slabel">Wine List</span>
       <div class="stabs" id="stabs-wine"></div>
       <div id="sp-wine-text" class="sp on"><textarea id="wine-text" placeholder="Paste the wine list here..."></textarea></div>
-      <div id="sp-wine-photo" class="sp"><div class="dropzone"><input type="file" accept="image/*" onchange="onImg('wine',this)"><div class="dico">&#128247;</div><p>Click, drag, or paste a screenshot</p></div><img id="thumb-wine" class="thumb"></div>
-      <div id="sp-wine-pdf" class="sp"><div class="dropzone"><input type="file" accept="application/pdf" onchange="onPdf('wine',this)"><div class="dico">&#128196;</div><p>Click or drag a PDF</p></div><div id="badge-wine"></div></div>
+      <div id="sp-wine-photo" class="sp"><div class="dropzone"><input type="file" accept="image/*" onchange="onImg('wine',this)"><div class="dico">📷</div><p>Click, drag, or paste a screenshot</p></div><img id="thumb-wine" class="thumb"></div>
+      <div id="sp-wine-pdf" class="sp"><div class="dropzone"><input type="file" accept="application/pdf" onchange="onPdf('wine',this)"><div class="dico">📄</div><p>Click or drag a PDF</p></div><div id="badge-wine"></div></div>
       <div id="sp-wine-url" class="sp"><input type="url" id="wine-url" placeholder="https://restaurant.com/wine-list"><p class="hint">Page will be fetched automatically</p></div>
     </div>
   </div>
 
-  <div class="card">
-    <span class="slabel">Your Dishes</span>
-    <button class="exBtn" id="exBtn" onclick="extractDishes()">&#10022; Pick My Plates</button>
-    <div id="dishGridWrap" style="display:none">
-      <p class="hint" style="margin-bottom:8px">Select up to 8 dishes:</p>
-      <div class="dishGrid" id="dishGrid"></div>
-    </div>
-    <div class="manRow">
-      <input type="text" id="manDish" placeholder="Or type a dish name and press Add">
-      <button class="secBtn" onclick="addManual()">Add</button>
-    </div>
-    <div id="pillWrap" style="display:none">
-      <p class="hint" style="margin-bottom:6px">Selected:</p>
-      <div class="pillRow" id="pillList"></div>
-    </div>
-  </div>
+  <!-- Courses -->
+  <div id="coursesWrap"></div>
 
-  <div class="glass-wrap">
-    <div class="glass-label">
-      By the glass
-      <small>Show top 2 glass options per dish instead of a bottle</small>
-    </div>
-    <label class="toggle">
-      <input type="checkbox" id="byGlass">
-      <span class="toggle-track"></span>
-    </label>
-  </div>
+  <!-- Add course -->
+  <button class="add-course-btn" id="addCourseBtn" onclick="addCourse()">+ Add Another Course</button>
 
-  <div class="card">
-    <span class="slabel">Wine Preference</span>
-    <div class="wtype-wrap" id="wtypeWrap"></div>
-    <span class="slabel" style="margin-top:1rem">Price Range</span>
-    <div class="price-row">
-      <div><label>Min ($)</label><input type="number" id="priceMin" placeholder="Any" min="0"></div>
-      <div><label>Max ($)</label><input type="number" id="priceMax" placeholder="Any" min="0"></div>
-    </div>
-  </div>
+  <!-- Get pairings -->
+  <button class="bigBtn" id="mainBtn" onclick="runAllCourses()">Get Pairings</button>
 
-  <button class="bigBtn" id="mainBtn" onclick="getPairings()">Get Pairings</button>
   <div id="results"></div>
 </div>
 
 <script>
+// ─────────────────────────────────────────
+// State
+// ─────────────────────────────────────────
 const S = {};
-["menu","wine"].forEach(k => S[k] = {mode:"text", img:null, imgType:null, pdf:null});
-let allDishes = [], picked = [];
-let cachedMenu = null, cachedWine = null;
-let wineType = "any";
+['menu','wine'].forEach(k => S[k] = {mode:'text', img:null, imgType:null, pdf:null});
+let courses = [];
+let courseCounter = 0;
+let cachedMenuContent = null; // cache menu so second/third course extractions don't re-fetch
+let cachedWineContent = null; // cache wine list so it's consistent across all courses
 
-const wineTypes = [
-  {id:"any",label:"No preference"},{id:"red",label:"Red"},{id:"white",label:"White"},
-  {id:"sparkling",label:"Sparkling & Rose"},{id:"dessert",label:"Dessert"}
-];
 
-const TC = {
-  "Red":"background:var(--red-bg);color:var(--red-text)",
-  "White":"background:var(--blue-bg);color:var(--blue-text)",
-  "Rose":"background:var(--amber-bg);color:var(--amber-text)",
-  "Ros\u00e9":"background:var(--amber-bg);color:var(--amber-text)",
-  "Sparkling":"background:var(--green-bg);color:var(--green-text)",
-  "Dessert":"background:var(--amber-bg);color:var(--amber-text)",
-  "Fortified":"background:var(--red-bg);color:var(--red-text)"
-};
 
-window.addEventListener("load", () => {
-  buildSourceTabs("menu");
-  buildSourceTabs("wine");
-  buildWineTypes();
-  document.getElementById("menu-text").addEventListener("input", () => cachedMenu = null);
-  document.getElementById("wine-text").addEventListener("input", () => cachedWine = null);
-  document.getElementById("manDish").addEventListener("keydown", e => { if (e.key === "Enter") addManual(); });
+// ─────────────────────────────────────────
+// Init
+// ─────────────────────────────────────────
+window.addEventListener('load', () => {
+  buildSourceTabs('menu');
+  buildSourceTabs('wine');
+  addCourse();
+  document.getElementById('menu-text')?.addEventListener('input', () => { cachedMenuContent = null; });
+  document.getElementById('wine-text')?.addEventListener('input', () => { cachedWineContent = null; });
 });
 
+// ─────────────────────────────────────────
+// Source tabs
+// ─────────────────────────────────────────
 function buildSourceTabs(side) {
-  const c = document.getElementById("stabs-" + side);
-  [["text","Text"],["photo","Photo/Screenshot"],["pdf","PDF"],["url","Link"]].forEach(([k,l], i) => {
-    const b = document.createElement("button");
-    b.className = "sBtn" + (i === 0 ? " on" : "");
+  const c = document.getElementById('stabs-' + side);
+  [['text','Text'],['photo','Photo/Screenshot'],['pdf','PDF'],['url','Link']].forEach(([k,l], i) => {
+    const b = document.createElement('button');
+    b.className = 'sBtn' + (i === 0 ? ' on' : '');
     b.textContent = l;
-    b.addEventListener("click", () => {
+    b.addEventListener('click', () => {
       S[side].mode = k;
-      if (side === "menu") cachedMenu = null;
-      if (side === "wine") cachedWine = null;
-      c.querySelectorAll(".sBtn").forEach(x => x.classList.remove("on"));
-      b.classList.add("on");
-      ["text","photo","pdf","url"].forEach(t => {
-        const el = document.getElementById("sp-" + side + "-" + t);
-        if (el) el.classList.toggle("on", t === k);
+      if (side === 'menu') cachedMenuContent = null; // clear cache when menu source changes
+      if (side === 'wine') cachedWineContent = null; // clear cache when wine source changes
+      c.querySelectorAll('.sBtn').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      ['text','photo','pdf','url'].forEach(t => {
+        const el = document.getElementById('sp-' + side + '-' + t);
+        if (el) el.classList.toggle('on', t === k);
       });
     });
     c.appendChild(b);
   });
 }
 
-function buildWineTypes() {
-  const wrap = document.getElementById("wtypeWrap");
-  wineTypes.forEach(wt => {
-    const b = document.createElement("button");
-    b.className = "wtype-btn" + (wt.id === "any" ? " on" : "");
-    b.textContent = wt.label;
-    b.addEventListener("click", () => {
-      wrap.querySelectorAll(".wtype-btn").forEach(x => x.classList.remove("on"));
-      b.classList.add("on");
-      wineType = wt.id;
-    });
-    wrap.appendChild(b);
-  });
-}
-
+// ─────────────────────────────────────────
+// File handlers
+// ─────────────────────────────────────────
 function onImg(side, input) {
   const file = input.files[0]; if (!file) return;
-  S[side].imgType = file.type || "image/jpeg";
+  S[side].imgType = file.type || 'image/jpeg';
   const r = new FileReader();
   r.onload = e => {
-    S[side].img = e.target.result.split(",")[1];
-    const t = document.getElementById("thumb-" + side);
-    if (t) { t.src = e.target.result; t.style.display = "block"; }
+    S[side].img = e.target.result.split(',')[1];
+    const t = document.getElementById('thumb-' + side);
+    if (t) { t.src = e.target.result; t.style.display = 'block'; }
   };
   r.readAsDataURL(file);
 }
-
 function onPdf(side, input) {
   const file = input.files[0]; if (!file) return;
   const r = new FileReader();
   r.onload = e => {
-    S[side].pdf = e.target.result.split(",")[1];
-    const b = document.getElementById("badge-" + side);
-    if (b) b.innerHTML = `<div class="fbadge">&#10003; ${file.name}</div>`;
+    S[side].pdf = e.target.result.split(',')[1];
+    const b = document.getElementById('badge-' + side);
+    if (b) b.innerHTML = `<div class="fbadge">✓ ${file.name}</div>`;
   };
   r.readAsDataURL(file);
 }
 
+// ─────────────────────────────────────────
+// Get content
+// ─────────────────────────────────────────
 async function getContent(side) {
-  const label = side === "menu" ? "food menu" : "wine list";
+  const label = side === 'menu' ? 'food menu' : 'wine list';
   const m = S[side].mode;
-  if (m === "text") {
-    const v = document.getElementById(side + "-text").value.trim();
-    if (!v) throw new Error("Please enter the " + label + ".");
-    return {type:"text", value:v};
+  if (m === 'text') {
+    const v = document.getElementById(side + '-text')?.value.trim();
+    if (!v) throw new Error('Please enter the ' + label + '.');
+    return { type:'text', value:v };
   }
-  if (m === "photo") {
-    if (!S[side].img) throw new Error("Please upload a photo for the " + label + ".");
-    return {type:"image", value:S[side].img, mimeType:S[side].imgType || "image/jpeg"};
+  if (m === 'photo') {
+    if (!S[side].img) throw new Error('Please upload a photo for the ' + label + '.');
+    return { type:'image', value:S[side].img, mimeType:S[side].imgType || 'image/jpeg' };
   }
-  if (m === "pdf") {
-    if (!S[side].pdf) throw new Error("Please upload a PDF for the " + label + ".");
-    return {type:"pdf", value:S[side].pdf};
+  if (m === 'pdf') {
+    if (!S[side].pdf) throw new Error('Please upload a PDF for the ' + label + '.');
+    return { type:'pdf', value:S[side].pdf };
   }
-  if (m === "url") {
-    const url = document.getElementById(side + "-url").value.trim();
-    if (!url) throw new Error("Please enter a URL for the " + label + ".");
-    setR(loadingHTML("Fetching " + label + "..."));
-    return {type:"text", value: await fetchUrl(url)};
+  if (m === 'url') {
+    const url = document.getElementById(side + '-url')?.value.trim();
+    if (!url) throw new Error('Please enter a URL for the ' + label + '.');
+    setR(loadingHTML('Fetching ' + label + '...'));
+    return { type:'text', value: await fetchUrl(url) };
   }
 }
 
+// ─────────────────────────────────────────
+// URL fetch with multiple proxy fallbacks
+// ─────────────────────────────────────────
 function cleanHtml(h) {
   return h
-    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi,"")
-    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi,"")
-    .replace(/<[^>]+>/g," ")
-    .replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ")
-    .replace(/\s{2,}/g," ").trim().slice(0,100000);
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ')
+    .replace(/\s{2,}/g, ' ').trim().slice(0, 100000);
 }
-
 async function fetchUrl(url) {
-  const errorSignals = ["rate limit","access denied","forbidden","error occurred","something went wrong","cloudflare","please enable javascript","enable cookies"];
-  function isGood(text) {
+  const errorSignals = ['api usage limits', 'rate limit', 'access denied', 'forbidden', 'error occurred', 'something went wrong', 'cloudflare', 'please enable javascript', 'enable cookies'];
+
+  function isGoodContent(text) {
     if (!text || text.length < 300) return false;
-    const c = cleanHtml(text);
-    return !(errorSignals.some(s => c.toLowerCase().includes(s)) && c.length < 1000) && c.length > 300;
+    const cleaned = cleanHtml(text);
+    const lower = cleaned.toLowerCase();
+    const isError = errorSignals.some(sig => lower.includes(sig)) && cleaned.length < 1000;
+    return !isError && cleaned.length > 300;
   }
+
+  // 1. Try our Vercel scrape endpoint (handles JS-rendered sites)
   try {
     const res = await Promise.race([
-      fetch("https://simplesomm.vercel.app/api/scrape", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url})}),
-      new Promise((_,r) => setTimeout(() => r(new Error("timeout")), 12000))
+      fetch('https://simplesomm.vercel.app/api/scrape', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      }),
+      new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 12000))
     ]);
-    if (res.ok) { const d = await res.json(); if (d.content && d.content.length > 300) return d.content; }
-  } catch(e) {}
+    if (res.ok) {
+      const data = await res.json();
+      if (data.content && data.content.length > 300) return data.content;
+    }
+  } catch(e) { /* fall through */ }
+
+  // 2. Try standard proxies
   const proxies = [
-    () => fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(url)).then(r => r.json()).then(d => d.contents),
-    () => fetch("https://corsproxy.io/?" + encodeURIComponent(url)).then(r => r.text()),
-    () => fetch("https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(url)).then(r => r.text())
+    () => fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`).then(r => r.json()).then(d => d.contents),
+    () => fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`).then(r => r.text()),
+    () => fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`).then(r => r.text())
   ];
   for (const proxy of proxies) {
     try {
-      const text = await Promise.race([proxy(), new Promise((_,r) => setTimeout(() => r(new Error("t")), 8000))]);
-      if (isGood(text)) return cleanHtml(text);
+      const text = await Promise.race([proxy(), new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 8000))]);
+      if (isGoodContent(text)) return cleanHtml(text);
     } catch(e) { continue; }
   }
+
+  // 3. Try Google Cache as free fallback for JS-heavy sites like Wix/Squarespace
   try {
-    const cUrl = "https://webcache.googleusercontent.com/search?q=cache:" + encodeURIComponent(url);
+    const cacheUrl = `https://webcache.googleusercontent.com/search?q=cache:${encodeURIComponent(url)}`;
     const res = await Promise.race([
-      fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(cUrl)).then(r => r.json()).then(d => d.contents),
-      new Promise((_,r) => setTimeout(() => r(new Error("t")), 10000))
+      fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(cacheUrl)}`).then(r => r.json()).then(d => d.contents),
+      new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 10000))
     ]);
-    if (isGood(res)) return cleanHtml(res);
-  } catch(e) {}
+    if (isGoodContent(res)) return cleanHtml(res);
+  } catch(e) { /* fall through */ }
+
+  // 4. Try web.archive.org (Wayback Machine) as last resort
   try {
-    const meta = await fetch("https://archive.org/wayback/available?url=" + encodeURIComponent(url)).then(r => r.json());
-    const snap = meta && meta.archived_snapshots && meta.archived_snapshots.closest && meta.archived_snapshots.closest.url;
-    if (snap) {
+    const archiveUrl = `https://archive.org/wayback/available?url=${encodeURIComponent(url)}`;
+    const meta = await fetch(archiveUrl).then(r => r.json());
+    const snapshot = meta?.archived_snapshots?.closest?.url;
+    if (snapshot) {
       const res = await Promise.race([
-        fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(snap)).then(r => r.json()).then(d => d.contents),
-        new Promise((_,r) => setTimeout(() => r(new Error("t")), 10000))
+        fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(snapshot)}`).then(r => r.json()).then(d => d.contents),
+        new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 10000))
       ]);
-      if (isGood(res)) return cleanHtml(res);
+      if (isGoodContent(res)) return cleanHtml(res);
     }
-  } catch(e) {}
-  throw new Error("Could not fetch that URL. Please upload a photo or screenshot instead -- that always works!");
+  } catch(e) { /* fall through */ }
+
+  throw new Error('Could not fetch that URL. Please upload a photo or screenshot of the menu instead — that always works!');
 }
 
+// ─────────────────────────────────────────
+// Claude API
+// ─────────────────────────────────────────
 function buildMsgs(parts) {
   return parts.map(c => {
-    if (c.type === "text") return {type:"text", text:c.value};
-    if (c.type === "image") return {type:"image", source:{type:"base64", media_type:c.mimeType||"image/jpeg", data:c.value}};
-    if (c.type === "pdf") return {type:"document", source:{type:"base64", media_type:"application/pdf", data:c.value}};
-    return {type:"text", text:""};
+    if (c.type === 'text') return { type:'text', text:c.value };
+    if (c.type === 'image') return { type:'image', source:{ type:'base64', media_type:c.mimeType||'image/jpeg', data:c.value }};
+    if (c.type === 'pdf') return { type:'document', source:{ type:'base64', media_type:'application/pdf', data:c.value }};
+    return { type:'text', text:'' };
   });
 }
-
 async function callClaude(system, parts, schema) {
   const body = {
-    model: "claude-sonnet-4-5-20250929",
+    model: 'claude-sonnet-4-5-20250929',
     max_tokens: 4096,
     system,
-    messages: [{role:"user", content:buildMsgs(parts)}]
+    messages: [{ role:'user', content:buildMsgs(parts) }]
   };
-  if (schema) body.output_format = {type:"json_schema", schema};
-  const res = await fetch("https://simplesomm.vercel.app/api/pair", {
-    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)
+  if (schema) body.output_format = { type: 'json_schema', schema };
+  const res = await fetch('https://simplesomm.vercel.app/api/pair', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
   });
-  if (!res.ok) { const t = await res.text(); throw new Error("API error (" + res.status + "): " + t.slice(0,200)); }
+  if (!res.ok) { const t = await res.text(); throw new Error(`API error (${res.status}): ${t.slice(0,200)}`); }
   const d = await res.json();
   if (d.error) throw new Error(d.error.message);
-  return d.content ? d.content.map(i => i.text || "").join("") : "";
+  return d.content?.map(i => i.text || '').join('') || '';
 }
 
-async function extractDishes() {
-  const btn = document.getElementById("exBtn");
-  btn.disabled = true; btn.textContent = "Extracting...";
+// ─────────────────────────────────────────
+// JSON helpers
+// ─────────────────────────────────────────
+function safeParseArr(raw) {
+  const cleaned = raw.replace(/```json/g,'').replace(/```/g,'').trim();
+  const start = cleaned.indexOf('[');
+  const end = cleaned.lastIndexOf(']');
+  if (start === -1 || end === -1) throw new Error('No JSON array found in response');
+  let s = cleaned.substring(start, end + 1);
+  // Fix trailing commas
+  s = s.replace(/,(\s*[\]\}])/g, '$1');
+  try { return JSON.parse(s); }
+  catch(e) {
+    // last resort: pull name fields
+    const names = s.match(/"name"\s*:\s*"([^"]+)"/g) || [];
+    if (!names.length) throw new Error('Could not parse response: ' + e.message);
+    return names.map(n => { const m = n.match(/"name"\s*:\s*"([^"]+)"/); return { name: m ? m[1] : '', desc:'' }; });
+  }
+}
+
+
+// Wine verification - removes hallucinated wines not on the list
+function verifyWines(arr, wineListText, mode) {
+  if (!wineListText || typeof wineListText !== 'string') return arr;
+  const wl = wineListText.toLowerCase();
+  return arr.filter(item => {
+    if (mode === 'glass') {
+      if (item.pairings) {
+        item.pairings = item.pairings.filter(p => {
+          const words = p.wine.toLowerCase().split(' ').filter(w => w.length > 3);
+          if (!words.length) return true;
+          return words.slice(0,3).some(w => wl.includes(w));
+        });
+      }
+      return true;
+    }
+    if (!item.wine) return true;
+    const words = item.wine.toLowerCase().split(' ').filter(w => w.length > 3);
+    if (!words.length) return true;
+    return words.slice(0,3).some(w => wl.includes(w));
+  });
+}
+
+// ─────────────────────────────────────────
+// Course management
+// ─────────────────────────────────────────
+const wineTypes = [
+  { id:'any', label:'No preference' },
+  { id:'red', label:'Red' },
+  { id:'white', label:'White' },
+  { id:'sparkling', label:'Sparkling & Rosé' },
+  { id:'dessert', label:'Dessert' },
+];
+
+function addCourse() {
+  if (courses.length >= 4) return;
+  courseCounter++;
+  const course = { id:courseCounter, dishes:[], picked:[], wineType:'any', priceMin:'', priceMax:'', byGlass:false };
+  courses.push(course);
+  renderCourseCard(course);
+  updateAddBtn();
+}
+
+function removeCourse(id) {
+  courses = courses.filter(c => c.id !== id);
+  document.getElementById('course-' + id)?.remove();
+  updateAddBtn();
+}
+
+function updateAddBtn() {
+  const btn = document.getElementById('addCourseBtn');
+  btn.disabled = courses.length >= 4;
+  btn.textContent = courses.length >= 4 ? 'Maximum 4 courses reached' : '+ Add Another Course';
+}
+
+function renderCourseCard(course) {
+  const wrap = document.getElementById('coursesWrap');
+  const div = document.createElement('div');
+  div.className = 'course-card';
+  div.id = 'course-' + course.id;
+
+  const removeBtn = courseCounter > 1 ? `<button class="remove-course" onclick="removeCourse(${course.id})">×</button>` : '';
+
+  div.innerHTML = `
+    <div class="course-bar">
+      <div class="course-bar-title">Course ${course.id}</div>
+      ${removeBtn}
+    </div>
+    <div class="course-body">
+      <button class="exBtn" id="exBtn-${course.id}" onclick="extractDishes(${course.id})">✦ Pick My Plates</button>
+      <div id="cdishWrap-${course.id}" style="display:none">
+        <span class="slabel">Select dishes for this course (up to 8)</span>
+        <div class="dishGrid" id="cdish-${course.id}"></div>
+      </div>
+      <div id="cpills-${course.id}" class="pillRow"></div>
+      <div class="manRow">
+        <input type="text" id="cman-${course.id}" placeholder="Or type a dish name and press Add">
+        <button class="secBtn" onclick="addManualDish(${course.id})">Add</button>
+      </div>
+      <span class="slabel" style="margin-top:1rem">Wine preference</span>
+      <div class="wtype-wrap" id="cwtype-${course.id}"></div>
+      <span class="slabel" style="margin-top:1rem">Price range</span>
+      <div class="price-row">
+        <div><label>Min ($)</label><input type="number" id="cpmin-${course.id}" placeholder="Any" min="0" oninput="updateCourse(${course.id})"></div>
+        <div><label>Max ($)</label><input type="number" id="cpmax-${course.id}" placeholder="Any" min="0" oninput="updateCourse(${course.id})"></div>
+      </div>
+      <div class="course-glass-wrap" style="margin-top:1rem;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--paper);border:1px solid var(--border);border-radius:10px;">
+        <div>
+          <div style="font-size:14px;color:var(--ink);font-family:'Jost',sans-serif;">By the glass</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:2px;">Show top 2 glass options per dish</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="cglass-${course.id}" onchange="updateCourse(${course.id})">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>`;
+
+  wrap.appendChild(div);
+
+  // Build wine type buttons
+  const wtWrap = document.getElementById('cwtype-' + course.id);
+  wineTypes.forEach(wt => {
+    const b = document.createElement('button');
+    b.className = 'wtype-btn' + (wt.id === 'any' ? ' on' : '');
+    b.textContent = wt.label;
+    b.addEventListener('click', () => {
+      wtWrap.querySelectorAll('.wtype-btn').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      course.wineType = wt.id;
+    });
+    wtWrap.appendChild(b);
+  });
+
+  // Enter key on manual input
+  document.getElementById('cman-' + course.id)?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') addManualDish(course.id);
+  });
+}
+
+// ─────────────────────────────────────────
+// Extract dishes (per course)
+// ─────────────────────────────────────────
+async function extractDishes(courseId) {
+  const course = courses.find(c => c.id === courseId); if (!course) return;
+  const btn = document.getElementById('exBtn-' + courseId);
+  btn.disabled = true; btn.textContent = 'Extracting...';
   let mc;
-  try { mc = cachedMenu || await getContent("menu"); cachedMenu = mc; }
-  catch(e) { showErr(e.message); btn.disabled = false; btn.textContent = "&#10022; Pick My Plates"; return; }
-  setR("");
+  try {
+    // Use cached menu content if available to avoid re-fetching on each course
+    if (cachedMenuContent) {
+      mc = cachedMenuContent;
+    } else {
+      mc = await getContent('menu');
+      cachedMenuContent = mc;
+    }
+  }
+  catch(e) { showErr(e.message); btn.disabled = false; btn.textContent = '✦ Pick My Plates'; return; }
   try {
     const raw = await callClaude(
-      "You are a menu parser. Extract ONLY actual food and drink items a customer would order. Do NOT include navigation, headers, addresses, hours, or any non-food text. CRITICAL: Return ONLY a raw JSON array starting with [ and ending with ]. No markdown, no explanation. Each element: Each element has name (dish name) and desc (short description or ingredients).",
-      [mc, {type:"text", value:"Extract only real food and drink items. Start your response with ["}]
+      `You are a menu parser. Extract ONLY the actual food and drink items a customer would order from this restaurant menu.
+Do NOT include: navigation links, page titles, section headers, restaurant name, address, phone numbers, social media, hours, policies, staff names, or any non-food content.
+Format your response as a simple list. Each line must follow this exact format:
+DISH: dish name | DESC: description or ingredients (leave blank if none)
+Example:
+DISH: Linguine Vongole | DESC: briny clams, peperoncino, lemon
+DISH: Tagliata di Manzo | DESC: 12oz prime NY strip, roasted fingerlings
+DISH: Tiramisu | DESC:
+Only output lines in this format, nothing else.`,
+      [mc, { type:'text', value:'List all food and drink items in the DISH: | DESC: format.' }]
     );
-    const cleaned = raw.replace(/```json/g,"").replace(/```/g,"").trim();
-    const start = cleaned.indexOf("["); const end = cleaned.lastIndexOf("]");
-    if (start === -1) throw new Error("No dishes found -- try pasting the menu text directly");
-    let parsed;
-    try { parsed = JSON.parse(cleaned.substring(start, end+1).replace(/,(\s*[\]\}])/g,"$1")); }
-    catch(e) {
-      const names = cleaned.match(/"name"\s*:\s*"([^"]+)"/g) || [];
-      if (!names.length) throw new Error("Could not parse dish list");
-      parsed = names.map(n => { const m = n.match(/"name"\s*:\s*"([^"]+)"/); return {name:m?m[1]:"", desc:""}; });
+    // Parse the simple line format — much more reliable than JSON
+    const lines = raw.split('\n').map(l => l.trim()).filter(l => l.startsWith('DISH:'));
+    course.dishes = lines.slice(0, 60).map(line => {
+      const dishMatch = line.match(/DISH:\s*([^|]+)/);
+      const descMatch = line.match(/DESC:\s*(.*)/);
+      const name = dishMatch ? dishMatch[1].trim() : '';
+      const desc = descMatch ? descMatch[1].trim() : '';
+      return name ? { name, desc } : null;
+    }).filter(Boolean);
+    if (!course.dishes.length) {
+      // Show what Claude actually returned so we can debug
+      const preview = raw.slice(0, 300).replace(/</g,'&lt;');
+      throw new Error('No dishes found. Claude returned: ' + preview);
     }
-    allDishes = parsed.slice(0,60).map(d => typeof d==="string" ? {name:d,desc:""} : d&&d.name ? {name:String(d.name),desc:String(d.desc||"")} : null).filter(Boolean);
-    if (!allDishes.length) throw new Error("No dishes found -- try pasting the menu text directly");
-    renderDishGrid();
-  } catch(e) { showErr("Could not extract dishes: " + e.message); }
-  btn.disabled = false; btn.textContent = "&#10022; Pick My Plates";
+    renderCourseDishGrid(courseId);
+  } catch(e) { showErr('Could not extract dishes: ' + e.message); }
+  btn.disabled = false; btn.textContent = '✦ Pick My Plates Again';
 }
 
-function renderDishGrid() {
-  const g = document.getElementById("dishGrid"); if (!g) return;
-  g.innerHTML = "";
-  allDishes.forEach((d, idx) => {
-    const isPicked = !!picked.find(p => p.name === d.name);
-    const isDisabled = !isPicked && picked.length >= 8;
-    const el = document.createElement("div");
-    el.className = "dchip" + (isPicked ? " picked" : (isDisabled ? " grey" : ""));
+function renderCourseDishGrid(courseId) {
+  const course = courses.find(c => c.id === courseId); if (!course) return;
+  const g = document.getElementById('cdish-' + courseId); if (!g) return;
+  const wrap = document.getElementById('cdishWrap-' + courseId);
+  if (!course.dishes.length) { if (wrap) wrap.style.display = 'none'; return; }
+  if (wrap) wrap.style.display = 'block';
+  g.innerHTML = '';
+  course.dishes.forEach((d, idx) => {
+    const isPicked = !!course.picked.find(p => p.name === d.name);
+    const isDisabled = !isPicked && course.picked.length >= 8;
+    const el = document.createElement('div');
+    el.className = 'dchip' + (isPicked ? ' picked' : (isDisabled ? ' grey' : ''));
     el.dataset.idx = idx;
-    el.innerHTML = `<div style="font-weight:500;pointer-events:none">${d.name}</div>${d.desc ? `<div style="font-size:11px;opacity:.6;margin-top:2px;line-height:1.3;pointer-events:none">${d.desc}</div>` : ""}`;
+    el.dataset.cid = courseId;
+    el.innerHTML = `<div style="font-weight:500;pointer-events:none">${d.name}</div>${d.desc ? `<div style="font-size:11px;opacity:.6;margin-top:2px;line-height:1.3;pointer-events:none">${d.desc}</div>` : ''}`;
     el.onclick = function() {
-      const dish = allDishes[parseInt(this.dataset.idx)]; if (!dish) return;
-      const pidx = picked.findIndex(p => p.name === dish.name);
-      if (pidx > -1) picked.splice(pidx, 1);
-      else { if (picked.length >= 8) return; picked.push(dish); }
-      renderDishGrid(); renderPills();
+      const cid = parseInt(this.dataset.cid);
+      const i = parseInt(this.dataset.idx);
+      const c = courses.find(x => x.id === cid); if (!c) return;
+      const dish = c.dishes[i]; if (!dish) return;
+      const pidx = c.picked.findIndex(p => p.name === dish.name);
+      if (pidx > -1) { c.picked.splice(pidx, 1); }
+      else { if (c.picked.length >= 8) return; c.picked.push(dish); }
+      renderCourseDishGrid(cid);
+      renderCoursePills(cid);
     };
     g.appendChild(el);
   });
-  document.getElementById("dishGridWrap").style.display = "block";
 }
 
-function addManual() {
-  const inp = document.getElementById("manDish"); const v = inp ? inp.value.trim() : ""; if (!v) return;
-  const dish = {name:v, desc:""};
-  if (!allDishes.find(d => d.name === v)) allDishes.push(dish);
-  if (picked.length < 8 && !picked.find(p => p.name === v)) picked.push(dish);
-  renderDishGrid(); renderPills(); if (inp) inp.value = "";
+function addManualDish(courseId) {
+  const course = courses.find(c => c.id === courseId); if (!course) return;
+  const inp = document.getElementById('cman-' + courseId);
+  const v = inp?.value.trim(); if (!v) return;
+  const dish = { name:v, desc:'' };
+  if (!course.dishes.find(d => d.name === v)) course.dishes.push(dish);
+  if (course.picked.length < 8 && !course.picked.find(p => p.name === v)) course.picked.push(dish);
+  renderCourseDishGrid(courseId);
+  renderCoursePills(courseId);
+  if (inp) inp.value = '';
 }
 
-function removePicked(i) { picked.splice(i, 1); renderDishGrid(); renderPills(); }
-
-function renderPills() {
-  const wrap = document.getElementById("pillWrap"); const list = document.getElementById("pillList");
-  wrap.style.display = picked.length ? "block" : "none";
-  list.innerHTML = picked.map((d,i) => `<span class="spill">${d.name}<button onclick="removePicked(${i})">×</button></span>`).join("");
+function removeCourseDish(courseId, i) {
+  const course = courses.find(c => c.id === courseId); if (!course) return;
+  course.picked.splice(i, 1);
+  renderCourseDishGrid(courseId);
+  renderCoursePills(courseId);
 }
 
+function renderCoursePills(courseId) {
+  const course = courses.find(c => c.id === courseId); if (!course) return;
+  const el = document.getElementById('cpills-' + courseId); if (!el) return;
+  el.innerHTML = course.picked.map((d, i) =>
+    `<span class="spill">${d.name}<button onclick="removeCourseDish(${courseId},${i})">×</button></span>`
+  ).join('');
+}
 
+function updateCourse(courseId) {
+  const course = courses.find(c => c.id === courseId); if (!course) return;
+  course.priceMin = document.getElementById('cpmin-' + courseId)?.value || '';
+  course.priceMax = document.getElementById('cpmax-' + courseId)?.value || '';
+  course.byGlass = document.getElementById('cglass-' + courseId)?.checked || false;
+}
 
-async function getPairings() {
-  const btn = document.getElementById("mainBtn");
-  btn.disabled = true; btn.textContent = "Working...";
-  setR(loadingHTML("Preparing your selections..."));
+// ─────────────────────────────────────────
+// Badge styles
+// ─────────────────────────────────────────
+const TC = {
+  'Red': 'background:var(--red-bg);color:var(--red-text)',
+  'White': 'background:var(--blue-bg);color:var(--blue-text)',
+  'Rosé': 'background:var(--amber-bg);color:var(--amber-text)',
+  'Sparkling': 'background:var(--green-bg);color:var(--green-text)',
+  'Dessert': 'background:var(--amber-bg);color:var(--amber-text)',
+  'Fortified': 'background:var(--red-bg);color:var(--red-text)',
+  'Orange': 'background:var(--amber-bg);color:var(--amber-text)'
+};
+
+// ─────────────────────────────────────────
+// Run all courses
+// ─────────────────────────────────────────
+async function runAllCourses() {
+  const activeCourses = courses.filter(c => c.picked.length > 0);
+  if (!activeCourses.length) { showErr('Please select at least one dish in a course first.'); return; }
+  const btn = document.getElementById('mainBtn');
+  btn.disabled = true; btn.textContent = 'Working...';
+  setR(loadingHTML('Preparing your selections...'));
   let mc, wc;
   try {
-    mc = cachedMenu || await getContent("menu"); cachedMenu = mc;
-    wc = cachedWine || await getContent("wine"); cachedWine = wc;
-  } catch(e) { showErr(e.message); btn.disabled = false; btn.textContent = "Get Pairings"; return; }
+    mc = cachedMenuContent || await getContent('menu');
+    if (!cachedMenuContent) cachedMenuContent = mc;
+    wc = cachedWineContent || await getContent('wine');
+    if (!cachedWineContent) cachedWineContent = wc;
+  }
+  catch(e) { showErr(e.message); btn.disabled = false; btn.textContent = 'Get Pairings'; return; }
+  // byGlass is per-course
+  let html = '';
+  for (let ci = 0; ci < activeCourses.length; ci++) {
+    const course = activeCourses[ci];
+    // Add delay between courses to avoid rate limits
+    if (ci > 0) await new Promise(r => setTimeout(r, 15000));
+    setR(loadingHTML(`Pairing Course ${course.id}...`));
+    try {
+      const dishList = course.picked.map(d => d.desc ? `${d.name} (${d.desc})` : d.name).join(', ');
+      // Trim content to reduce tokens and avoid rate limits
+      const mcTrimmed = mc.type === 'text' ? {...mc, value: mc.value.slice(0, 6000)} : mc;
+      const wcTrimmed = wc.type === 'text' ? {...wc, value: wc.value.slice(0, 12000)} : wc;
+      const wtLabel = wineTypes.find(w => w.id === course.wineType)?.label || '';
+      const typeFilter = course.wineType !== 'any' ? `Only suggest ${wtLabel} wines.` : '';
+      const priceFilter = course.priceMin || course.priceMax
+        ? `Only suggest wines priced${course.priceMin ? ' above $' + course.priceMin : ''}${course.priceMin && course.priceMax ? ' and' : ''}${course.priceMax ? ' below $' + course.priceMax : ''}.`
+        : '';
+      const byGlass = course.byGlass;
+      const glassFilter = byGlass ? 'Only suggest wines available by the glass. Show the top 2 best by-the-glass options per dish.' : '';
 
-  const byGlass = document.getElementById("byGlass").checked;
-  const wtLabel = wineTypes.find(w => w.id === wineType) ? wineTypes.find(w => w.id === wineType).label : "";
-  const typeFilter = wineType !== "any" ? "Only suggest " + wtLabel + " wines." : "";
-  const pMin = document.getElementById("priceMin").value;
-  const pMax = document.getElementById("priceMax").value;
-  const priceFilter = pMin || pMax ? "Only suggest wines priced" + (pMin?" above $"+pMin:"") + (pMin&&pMax?" and":"") + (pMax?" below $"+pMax:"") + "." : "";
-  const dishList = picked.length ? picked.map(d => d.desc ? d.name+" ("+d.desc+")" : d.name).join(", ") : "";
-  const dishContext = dishList ? "The user is ordering: " + dishList + "." : "Pair wines to all dishes on the menu.";
-  const mcT = mc.type === "text" ? Object.assign({}, mc, {value:mc.value.slice(0,6000)}) : mc;
-  const wcT = wc.type === "text" ? Object.assign({}, wc, {value:wc.value.slice(0,12000)}) : wc;
-  setR(loadingHTML("Consulting the sommelier..."));
-  try {
-    if (byGlass) {
-      const schema = {
-        type:"object", additionalProperties:false,
-        properties:{dishes:{type:"array", items:{type:"object", additionalProperties:false,
-          properties:{dish:{type:"string"}, pairings:{type:"array", items:{type:"object", additionalProperties:false,
-            properties:{wine:{type:"string"},type:{type:"string",enum:["Red","White","Rose","Sparkling","Dessert","Fortified"]},price:{type:"string"},note:{type:"string"}},
-            required:["wine","type","price","note"]
-          }}},
-          required:["dish","pairings"]
-        }}},
-        required:["dishes"]
-      };
-      const raw = await callClaude(
-        "You are a world-class sommelier. For each dish, suggest the top 2 wines by the glass from the wine list below. CRITICAL RULE: Only suggest wines that appear on the wine list. Copy each wine name EXACTLY. Do not invent wines not on the list. " + typeFilter + " " + priceFilter + " " + dishContext + " Food menu:",
-        [mcT, {type:"text",value:"Wine list:"}, wcT, {type:"text",value:"Provide the top 2 by-the-glass pairings per dish."}],
-        schema
-      );
-      let arr;
-      try { const p = JSON.parse(raw); arr = p.dishes || p; } catch(e) { throw new Error("Could not parse results"); }
-      const verified = arr;
-      let html = `<div class="divider">By the Glass Pairings</div>`;
-      verified.forEach(p => {
-        html += `<div class="pcard"><div class="dname">${p.dish}</div>`;
-        (p.pairings||[]).forEach((pair,pi) => {
-          const style = TC[pair.type] || TC["White"];
-          html += `<div class="wrow" style="margin-bottom:4px"><span style="font-size:11px;color:var(--ink3);min-width:16px">${pi+1}.</span><span class="wname">${pair.wine}</span>${pair.price?`<span class="wprice">${pair.price}</span>`:""}<span class="wbadge" style="${style}">${pair.type}</span></div>`;
-          if (pair.note) html += `<p style="font-size:13px;color:var(--ink3);margin-left:20px;margin-bottom:6px;line-height:1.6;font-family:'Jost',sans-serif">${pair.note}</p>`;
+      if (byGlass) {
+        const glassSchema = {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            dishes: {
+              type: 'array',
+              items: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  dish: { type: 'string' },
+                  pairings: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      additionalProperties: false,
+                      properties: {
+                        wine: { type: 'string' },
+                        type: { type: 'string', enum: ['Red','White','Rose','Sparkling','Dessert','Fortified'] },
+                        price: { type: 'string' },
+                        note: { type: 'string' }
+                      },
+                      required: ['wine','type','price','note']
+                    }
+                  }
+                },
+                required: ['dish','pairings']
+              }
+            }
+          },
+          required: ['dishes']
+        };
+        const raw = await callClaude(
+          `You are a world-class sommelier. For each dish, suggest the top 2 wines available by the glass from the wine list.
+CRITICAL RULE: You may ONLY suggest wines that appear VERBATIM on the wine list provided below. Do NOT invent, guess, or suggest any wine not explicitly listed in the wine list. Before including any wine in your response, verify it exists word-for-word in the wine list. Every wine name and price must be copied exactly as it appears. Only suggest wines explicitly marked as available by the glass on the wine list.
+${typeFilter} ${priceFilter} ${glassFilter}
+For each dish provide the 2 best glass pairings with exact wine name copied from the list, type, price as shown, and a 1-2 sentence note explaining why it works.
+Food menu:`,
+          [mcTrimmed, {type:'text',value:'Wine list:'}, wcTrimmed, {type:'text',value:`Dishes for this course: ${dishList}.`}],
+          glassSchema
+        );
+        let arr;
+        try {
+          const parsed = JSON.parse(raw);
+          arr = parsed.dishes || parsed;
+          if (!Array.isArray(arr)) arr = Object.values(parsed)[0] || [];
+        } catch(e) {
+          const s = raw.replace(/```json/g,'').replace(/```/g,'').trim();
+          const start = s.indexOf('['); const end = s.lastIndexOf(']');
+          if (start === -1) throw new Error('No pairing results returned — please try again');
+          arr = JSON.parse(s.substring(start, end+1));
+        }
+        if (!arr.length) throw new Error('No pairing results returned — please try again');
+        const wcText2 = wc && wc.type === 'text' ? wc.value : '';
+        const verified2 = verifyWines(arr, wcText2, 'glass');
+        if (verified2.length) arr.splice(0, arr.length, ...verified2);
+        html += `<div class="course-results"><div class="course-results-title">Course ${course.id} — By the Glass</div>`;
+        arr.forEach(p => {
+          html += `<div class="pcard"><div class="dname">${p.dish}</div>`;
+          (p.pairings || []).forEach((pair, pi) => {
+            const style = TC[pair.type] || TC['White'];
+            html += `<div class="wrow"><span style="font-size:11px;color:var(--ink3);min-width:16px">${pi+1}.</span><span class="wname">${pair.wine}</span>${pair.price ? `<span class="wprice">${pair.price}</span>` : ''}<span class="wbadge" style="${style}">${pair.type}</span></div>`;
+            if (pair.note) html += `<p style="font-size:13px;color:var(--ink3);margin-left:20px;margin-bottom:6px;line-height:1.6;font-family:'Jost',sans-serif">${pair.note}</p>`;
+          });
+          html += `</div>`;
         });
         html += `</div>`;
-      });
-      setR(html);
-    } else {
-      const schema = {
-        type:"object", additionalProperties:false,
-        properties:{wines:{type:"array", items:{type:"object", additionalProperties:false,
-          properties:{
-            wine:{type:"string"},type:{type:"string",enum:["Red","White","Rose","Sparkling","Dessert","Fortified"]},
-            price:{type:"string"},score:{type:"number"},sommelier_note:{type:"string"},
-            dish_coverage:{type:"array", items:{type:"object", additionalProperties:false,
-              properties:{dish:{type:"string"},fit:{type:"string",enum:["excellent","good","passable"]},note:{type:"string"}},
-              required:["dish","fit","note"]
-            }}
+      } else {
+        const bottleSchema = {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            wines: {
+              type: 'array',
+              items: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  wine: { type: 'string' },
+                  type: { type: 'string', enum: ['Red','White','Rose','Sparkling','Dessert','Fortified'] },
+                  price: { type: 'string' },
+                  score: { type: 'number' },
+                  sommelier_note: { type: 'string' },
+                  dish_coverage: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      additionalProperties: false,
+                      properties: {
+                        dish: { type: 'string' },
+                        fit: { type: 'string', enum: ['excellent','good','passable'] },
+                        note: { type: 'string' }
+                      },
+                      required: ['dish','fit','note']
+                    }
+                  }
+                },
+                required: ['wine','type','price','score','sommelier_note','dish_coverage']
+              }
+            }
           },
-          required:["wine","type","price","score","sommelier_note","dish_coverage"]
-        }}},
-        required:["wines"]
-      };
-      const raw = await callClaude(
-        "You are a world-class sommelier helping choose the best bottle for a selection of dishes. CRITICAL RULE: You must ONLY suggest wines from the wine list below. Copy each wine name EXACTLY as written. Do not suggest any wine not on the list. If unsure, skip it. " + typeFilter + " " + priceFilter + " " + dishContext + " Suggest 3-6 wines from the list ranked best-first. For each include exact name, type, price, a compatibility score 1-100, a 2-3 sentence sommelier note, and a per-dish assessment. Food menu:",
-        [mcT, {type:"text",value:"Wine list:"}, wcT, {type:"text",value:"Respond with the ranked wine suggestions."}],
-        schema
-      );
-      let arr;
-      try { const p = JSON.parse(raw); arr = p.wines || p; if (!Array.isArray(arr)) arr = Object.values(p)[0]||[]; } catch(e) { throw new Error("Could not parse results"); }
-      const verified = arr;
-      if (!verified.length) throw new Error("No wine pairings returned. Please try again.");
-      const fd = {excellent:"dg",good:"dok",passable:"dw"};
-      let html = `<div class="divider">Best Wines &mdash; Ranked</div>`;
-      verified.forEach((w,i) => {
-        const style = TC[w.type] || TC["White"];
-        const pct = Math.min(100,Math.max(0,w.score||0));
-        const cov = (w.dish_coverage||[]).map(d => `<div class="crow"><div class="${fd[d.fit]||"dok"}"></div><div><strong>${d.dish}</strong> &mdash; ${d.note}</div></div>`).join("");
-        html += `<div class="gcard"><div class="ghead"><span class="gnum">${i+1}</span><span class="gwname">${w.wine}</span><span class="wbadge" style="${style};margin-left:2px">${w.type}</span>${w.price?`<span class="wprice" style="color:var(--gold);font-size:12px;font-family:'Jost',sans-serif;margin-left:4px">${w.price}</span>`:""}</div><div class="sbar"><div class="sbl"><span>Compatibility</span><span>${pct}/100</span></div><div class="sbg"><div class="sbf" style="width:${pct}%"></div></div></div>${cov?`<div class="covWrap"><div class="covLabel">How it pairs with your dishes</div>${cov}</div>`:""}<div class="snote">${w.sommelier_note||""}</div></div>`;
-      });
-      html += `<div class="leg"><span><span class="legdot" style="background:#2d9e58"></span>Excellent</span><span><span class="legdot" style="background:#c98a1a"></span>Good</span><span><span class="legdot" style="background:#b83232"></span>Passable</span></div>`;
-      setR(html);
+          required: ['wines']
+        };
+        const raw = await callClaude(
+          `You are a world-class sommelier helping choose the best bottle for a course of dishes.
+CRITICAL RULE: You may ONLY suggest wines that appear VERBATIM on the wine list provided below. Do NOT invent, guess, or suggest any wine not explicitly listed in the wine list. Before including any wine in your response, verify it exists word-for-word in the wine list. Every wine name and price must be copied exactly as it appears. If you cannot find a suitable wine on the list, say so rather than inventing one.
+${typeFilter} ${priceFilter}
+Suggest 3-6 wines from the wine list ranked best-first by how well they work across all the dishes.
+For each wine include: exact name copied from the list, type, price as shown on the list, a compatibility score 1-100, a 2-3 sentence sommelier note, and a per-dish coverage assessment.
+Food menu:`,
+          [mc, {type:'text',value:'Wine list:'}, wc, {type:'text',value:`Dishes for this course: ${dishList}.`}],
+          bottleSchema
+        );
+        let arr;
+        try {
+          const parsed = JSON.parse(raw);
+          arr = parsed.wines || parsed;
+          if (!Array.isArray(arr)) arr = Object.values(parsed)[0] || [];
+        } catch(e) {
+          // fallback robust parse
+          const s = raw.replace(/```json/g,'').replace(/```/g,'').trim();
+          const start = s.indexOf('['); const end = s.lastIndexOf(']');
+          if (start === -1) throw new Error('No pairing results returned — please try again');
+          arr = JSON.parse(s.substring(start, end+1));
+        }
+        if (!arr.length) throw new Error('No pairing results returned — please try again');
+        const wcText = wc && wc.type === 'text' ? wc.value : '';
+        const verified = verifyWines(arr, wcText, 'bottle');
+        if (verified.length) arr.splice(0, arr.length, ...verified);
+        const fd = { excellent:'dg', good:'dok', passable:'dw' };
+        html += `<div class="course-results"><div class="course-results-title">Course ${course.id}</div>`;
+        arr.forEach((w, i) => {
+          const style = TC[w.type] || TC['White'];
+          const pct = Math.min(100, Math.max(0, w.score || 0));
+          const cov = (w.dish_coverage || []).map(d =>
+            `<div class="crow"><div class="${fd[d.fit] || 'dok'}"></div><div><strong>${d.dish}</strong> — ${d.note}</div></div>`
+          ).join('');
+          html += `<div class="gcard">
+            <div class="ghead"><span class="gnum">${i+1}</span><span class="gwname">${w.wine}</span><span class="wbadge" style="${style};margin-left:2px">${w.type}</span>${w.price ? `<span class="wprice" style="color:var(--gold);font-size:12px;font-family:'Jost',sans-serif">${w.price}</span>` : ''}</div>
+            <div class="sbar"><div class="sbl"><span>Course compatibility</span><span>${pct}/100</span></div><div class="sbg"><div class="sbf" style="width:${pct}%"></div></div></div>
+            ${cov ? `<div class="covWrap"><div class="covLabel">How it pairs with each dish</div>${cov}</div>` : ''}
+            <div class="snote">${w.sommelier_note || ''}</div>
+          </div>`;
+        });
+        html += `<div class="leg">
+          <span><span class="legdot" style="background:#2d9e58"></span>Excellent</span>
+          <span><span class="legdot" style="background:#c98a1a"></span>Good</span>
+          <span><span class="legdot" style="background:#b83232"></span>Passable</span>
+        </div></div>`;
+      }
+    } catch(e) {
+      html += `<div class="err">Course ${course.id}: ${e.message}</div>`;
     }
-  } catch(e) { showErr("Error: " + e.message); }
-  btn.disabled = false; btn.textContent = "Get Pairings";
+  }
+  setR(html || '<div class="err">No results returned.</div>');
+  btn.disabled = false; btn.textContent = 'Get Pairings';
 }
 
-function setR(html) { document.getElementById("results").innerHTML = html; }
+// ─────────────────────────────────────────
+// UI helpers
+// ─────────────────────────────────────────
+function setR(html) { document.getElementById('results').innerHTML = html; }
 function showErr(msg) { setR(`<div class="err">${msg}</div>`); }
-function loadingHTML(msg) { return `<div class="loading"><div class="spin"></div><div class="loading-text">${msg||"Consulting the sommelier..."}</div></div>`; }
+function loadingHTML(msg) {
+  return `<div class="loading"><div class="spin"></div><div class="loading-text">${msg || 'Consulting the sommelier...'}</div></div>`;
+}
 </script>
 </body>
 </html>
