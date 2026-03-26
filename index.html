@@ -189,7 +189,7 @@ input[type=url]:focus,input[type=text]:focus,input[type=number]:focus{outline:no
 const S = {};
 ["menu","wine"].forEach(k => S[k] = {mode:"text", img:null, imgType:null, pdf:null});
 let allDishes = [], picked = [];
-let cachedMenu = null, cachedWine = null;
+let cachedMenu = null, cachedWine = null, cachedWineNames = null;
 let wineType = "any";
 
 const wineTypes = [
@@ -212,7 +212,7 @@ window.addEventListener("load", () => {
   buildSourceTabs("wine");
   buildWineTypes();
   document.getElementById("menu-text").addEventListener("input", () => cachedMenu = null);
-  document.getElementById("wine-text").addEventListener("input", () => cachedWine = null);
+  document.getElementById("wine-text").addEventListener("input", () => { cachedWine = null; cachedWineNames = null; });
   document.getElementById("manDish").addEventListener("keydown", e => { if (e.key === "Enter") addManual(); });
 });
 
@@ -225,7 +225,7 @@ function buildSourceTabs(side) {
     b.addEventListener("click", () => {
       S[side].mode = k;
       if (side === "menu") cachedMenu = null;
-      if (side === "wine") cachedWine = null;
+      if (side === "wine") { cachedWine = null; cachedWineNames = null; }
       c.querySelectorAll(".sBtn").forEach(x => x.classList.remove("on"));
       b.classList.add("on");
       ["text","photo","pdf","url"].forEach(t => {
@@ -448,22 +448,50 @@ function renderPills() {
   list.innerHTML = picked.map((d,i) => `<span class="spill">${d.name}<button onclick="removePicked(${i})">×</button></span>`).join("");
 }
 
-function verifyWines(arr, wineText, mode) {
-  if (!wineText) return arr;
-  const wl = wineText.toLowerCase();
+// Parse wine list into structured array of wine names for exact matching
+async function extractWineNames(wc) {
+  try {
+    const raw = await callClaude(
+      "Extract every wine name from this wine list. Return ONLY a JSON array of strings, each being the exact wine name as it appears. No prices, no descriptions, just the names.",
+      [wc, {type:"text", value:"Return only the JSON array of wine names."}]
+    );
+    const cleaned = raw.replace(/```json/g,"").replace(/```/g,"").trim();
+    const start = cleaned.indexOf("["); const end = cleaned.lastIndexOf("]");
+    if (start === -1) return null;
+    return JSON.parse(cleaned.substring(start, end+1).replace(/,(\s*[\]\}])/g,"$1"));
+  } catch(e) { return null; }
+}
+
+function verifyWines(arr, wineNames, mode) {
+  if (!wineNames || !wineNames.length) return arr;
+  // Build a normalized list for fuzzy matching
+  const normalized = wineNames.map(w => w.toLowerCase().trim());
+  
+  function isOnList(wineName) {
+    if (!wineName) return false;
+    const wl = wineName.toLowerCase().trim();
+    // Exact match
+    if (normalized.includes(wl)) return true;
+    // Check if it's a close match (wine name appears as substring or vice versa)
+    return normalized.some(n => {
+      if (n.includes(wl) || wl.includes(n)) return true;
+      // Check key words match (producer + wine type)
+      const wWords = wl.split(" ").filter(w => w.length > 3);
+      const nWords = n.split(" ").filter(w => w.length > 3);
+      if (!wWords.length || !nWords.length) return false;
+      const matches = wWords.filter(w => nWords.includes(w));
+      return matches.length >= Math.min(2, wWords.length);
+    });
+  }
+
   return arr.filter(item => {
     if (mode === "glass") {
       if (item.pairings) {
-        item.pairings = item.pairings.filter(p => {
-          const words = p.wine.toLowerCase().split(" ").filter(w => w.length > 3);
-          return !words.length || words.slice(0,3).some(w => wl.includes(w));
-        });
+        item.pairings = item.pairings.filter(p => isOnList(p.wine));
       }
-      return true;
+      return item.pairings && item.pairings.length > 0;
     }
-    if (!item.wine) return true;
-    const words = item.wine.toLowerCase().split(" ").filter(w => w.length > 3);
-    return !words.length || words.slice(0,3).some(w => wl.includes(w));
+    return isOnList(item.wine);
   });
 }
 
@@ -476,6 +504,11 @@ async function getPairings() {
     mc = cachedMenu || await getContent("menu"); cachedMenu = mc;
     wc = cachedWine || await getContent("wine"); cachedWine = wc;
   } catch(e) { showErr(e.message); btn.disabled = false; btn.textContent = "Get Pairings"; return; }
+  // Extract structured wine names for accurate verification
+  setR(loadingHTML("Reading the wine list..."));
+  if (!cachedWineNames) {
+    cachedWineNames = await extractWineNames(wc);
+  }
   const byGlass = document.getElementById("byGlass").checked;
   const wtLabel = wineTypes.find(w => w.id === wineType) ? wineTypes.find(w => w.id === wineType).label : "";
   const typeFilter = wineType !== "any" ? "Only suggest " + wtLabel + " wines." : "";
@@ -486,7 +519,6 @@ async function getPairings() {
   const dishContext = dishList ? "The user is ordering: " + dishList + "." : "Pair wines to all dishes on the menu.";
   const mcT = mc.type === "text" ? Object.assign({}, mc, {value:mc.value.slice(0,6000)}) : mc;
   const wcT = wc.type === "text" ? Object.assign({}, wc, {value:wc.value.slice(0,12000)}) : wc;
-  const wcText = wc.type === "text" ? wc.value : "";
   setR(loadingHTML("Consulting the sommelier..."));
   try {
     if (byGlass) {
@@ -508,7 +540,7 @@ async function getPairings() {
       );
       let arr;
       try { const p = JSON.parse(raw); arr = p.dishes || p; } catch(e) { throw new Error("Could not parse results"); }
-      const verified = verifyWines(arr, wcText, "glass");
+      const verified = verifyWines(arr, cachedWineNames, "glass");
       let html = `<div class="divider">By the Glass Pairings</div>`;
       verified.forEach(p => {
         html += `<div class="pcard"><div class="dname">${p.dish}</div>`;
@@ -543,7 +575,7 @@ async function getPairings() {
       );
       let arr;
       try { const p = JSON.parse(raw); arr = p.wines || p; if (!Array.isArray(arr)) arr = Object.values(p)[0]||[]; } catch(e) { throw new Error("Could not parse results"); }
-      const verified = verifyWines(arr, wcText, "bottle");
+      const verified = verifyWines(arr, cachedWineNames, "bottle");
       if (!verified.length) throw new Error("No matching wines found. Please try again.");
       const fd = {excellent:"dg",good:"dok",passable:"dw"};
       let html = `<div class="divider">Best Wines &mdash; Ranked</div>`;
